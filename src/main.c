@@ -1,34 +1,26 @@
 #include "../raylib/src/raylib.h"
 #include "../raylib/src/raymath.h"
-#if defined(PLATFORM_DESKTOP)
+#include "game.h"
+// #if defined(PLATFORM_DESKTOP)
     #define GLSL_VERSION            330
-#else   // PLATFORM_ANDROID, PLATFORM_WEB
-    #define GLSL_VERSION            100
-#endif
+// #else   // PLATFORM_ANDROID, PLATFORM_WEB
+//     #define GLSL_VERSION            100
+// #endif
+//if you want cross platform, use this to load shaders based off version
+
 
 int windowWidth = 1000;
 int windowHeight = 500;
 
 void Update() {
-	//use GetFrameTime()
-}
-
-#define bgShaderCount 1
-Shader bgShaders[bgShaderCount];
-int currentBGShaderIndex = 0;
-void DrawBackground() {
-	
-	BeginShaderMode(bgShaders[currentBGShaderIndex]);
-	float totalTime = GetTime();
-	SetShaderValue(bgShaders[currentBGShaderIndex], GetShaderLocation(bgShaders[currentBGShaderIndex], "totalTime"), &totalTime, SHADER_UNIFORM_FLOAT);
-	DrawRectangle(0, 0, windowWidth, windowHeight, BLACK);
-	EndShaderMode();
+	//use GetFrameTime() for deltaTime
+	UpdateGame();
 }
 
 void Initialize() {
+	SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 	InitWindow(windowWidth, windowHeight, "Template-4.0.0");
-	for (int i = 0; i < bgShaderCount; i++)
-		bgShaders[i] = LoadShader(0, TextFormat("%s%s", GetApplicationDirectory(), TextFormat("../resources/shaders/background%i.fs", i)));
+	InitializeGame();
 }
 
 void CloseProgram() {
@@ -41,13 +33,16 @@ int main()
 	Initialize();
 
 	while (!WindowShouldClose()) {
-
+		windowWidth = GetScreenWidth();
+		windowHeight = GetScreenHeight();
 		Update();
 
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
+		// if (IsWindowResized())
+		// 	InitWindow()
 
-		DrawBackground();
+		DrawGame(windowHeight, windowWidth);
 
 		EndDrawing();
 	}	
