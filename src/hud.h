@@ -8,7 +8,7 @@
 #define HUD_ITEMBTN 1
 #define HUD_HEALTHBAR 2
 #define HUD_SNOOZEBAR 3
-
+#define HUD_STARTBTN 4
 
 
 typedef struct hudelementstruct

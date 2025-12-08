@@ -6,11 +6,37 @@
 void DrawBackground(int windowHeight, int windowWidth);
 
 
+int gameState = 0; //macros defined in game.h
+void SetGameState(int state) {gameState = state;}
+
+int prevGameState;
+
 void UpdateGame() {
     if (IsMouseButtonPressed(0))
         CheckClick(GetMousePosition());
     else
         CheckHover(GetMousePosition());
+    
+    bool isFirst = false;
+    if (prevGameState != gameState) {
+        isFirst = true;
+    }
+
+    //now update things/hud based off of gamestate
+    if (isFirst) {
+        if (gameState == MAINMENU) {
+            ActivateElement(HUD_STARTBTN);
+            ShowElement(HUD_STARTBTN);
+            
+        } else if (prevGameState == MAINMENU) {
+            DeactivateElement(HUD_STARTBTN);
+            HideElement(HUD_STARTBTN);
+        }
+    }
+    else {
+        
+    }
+    prevGameState = gameState;
 }
 
 void DrawGame(int windowHeight, int windowWidth) {
@@ -21,7 +47,7 @@ void DrawGame(int windowHeight, int windowWidth) {
 }
 
 
-#define bgShaderCount 1
+#define bgShaderCount 2
 Shader bgShaders[bgShaderCount];
 int currentBGShaderIndex = 0;
 

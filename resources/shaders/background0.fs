@@ -47,6 +47,11 @@ void main() {
         finalColor.rgb += vec3(0.2,0.2,0.2);
 
     vec2 uv = fragTexCoord;
+    uv.y += 1 * sin(fragTexCoord.x + totalTime * 0.4);
+    uv.xy /= 2 + 1.5 * sin(totalTime * 0.15); //zoom
 
-    //finalColor = texture(texture0, uv);
+    uv.x -= (1 - fragTexCoord.y) * (-fragTexCoord.x + 0.5) * (sin(totalTime * 0.2) * 0.5 + 0.5); //convergence
+
+    uv.x += 0.4 * sin(fragTexCoord.y + totalTime * 0.2) + totalTime * 0.2 * sin(totalTime * 0.05);
+    finalColor.rgb -= texture(texture0, uv).rgb * 0.8;
 }

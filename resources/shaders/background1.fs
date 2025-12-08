@@ -11,6 +11,7 @@ uniform vec2 mousePos;
 uniform vec2 laggardMousePos;
 
 out vec4 finalColor;
+uniform float totalTime;
 
 //adapted from https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
 vec2 minimumVector(vec2 v, vec2 w, vec2 p) {
