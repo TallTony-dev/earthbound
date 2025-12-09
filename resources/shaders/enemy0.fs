@@ -26,12 +26,12 @@ void main() {
 
     vec2 scan = vec2(gl_FragCoord.xy);
     scan.y += 4 * cos(gl_FragCoord.x / 20 + totalTime * 2);
-    scan.y += 2000 * sin(fragTexCoord.x * 3.14159) * sin(totalTime) * dist * dist;
-    if (int(scan.y) % 6 == 0 || int(scan.y + 1) % 6 == 0)
+    scan.y -= dist * 4000 * (fragTexCoord.y - 0.5);
+    if (int(scan.y) % 20 == 0 || int(scan.y + 1) % 20 == 0)
         finalColor.rgb *= vec3(0.1,0.1,0.1);
     // else if (int(scan.y - 1) % 6 == 0)
     //     finalColor.rgb += vec3(0.2,0.2,0.2);
 
     
-    finalColor.a += (dist-0.5) * (dist-0.5) * 10;
+    finalColor.a += min(dist-0.5, 0.0) * min(dist-0.5, 0.0) * 10;
 }

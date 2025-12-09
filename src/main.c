@@ -33,8 +33,6 @@ int main()
 	Initialize();
 
 	while (!WindowShouldClose()) {
-		windowWidth = GetScreenWidth();
-		windowHeight = GetScreenHeight();
 		Update();
 
 		BeginDrawing();
@@ -42,7 +40,7 @@ int main()
 		// if (IsWindowResized())
 		// 	InitWindow()
 
-		DrawGame(windowHeight, windowWidth);
+		DrawGame();
 
 		EndDrawing();
 	}	

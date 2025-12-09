@@ -1,0 +1,25 @@
+{ //attackbutton
+    .pos = {100,100},
+    .height = 100,
+    .width = 300,
+    .rotation = 0,
+    .texture = 0,
+    .isActive = true,
+    .isHidden = false,
+    .onClickFunction = ToggleElementVis,
+    .onHoverFunction = ToggleElementVis,
+    .unHoverFunction = ToggleElementVis
+},
+{ //itembutton
+    .pos = {300,300},
+    .height = 100,
+    .width = 300,
+    .rotation = 0,
+    .texture = 0,
+    .isActive = true,
+    .isHidden = false,
+    .onClickFunction = ToggleElementVis,
+    .onHoverFunction = ToggleElementVis,
+    .unHoverFunction = ToggleElementVis
+}
+

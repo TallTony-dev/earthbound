@@ -4,27 +4,23 @@
 HudElement elements[HUDELEMENTCOUNT];
 
 void InitializeHud() {
-    //attackbutton
-    for (int i = 0; i < HUDELEMENTCOUNT; i++)
-        elements[i].elementIndex = i;
 
-    elements[0].pos = (Vector2){100,100};
-    elements[0].width = 500;
-    elements[0].height = 250;
-    elements[0].texture = LoadTexture(TextFormat("%s%s", GetApplicationDirectory(), "../resources/textures/testrocks.png"));
-    elements[0].isActive = true;
-    elements[0].onClickFunction = ToggleElementVis; //always has elementindex passed in
-    elements[0].onHoverFunction = ToggleElementVis;
-    elements[0].unHoverFunction = ToggleElementVis;
+    HudElement elements_[HUDELEMENTCOUNT] = { 
+        #include "hudembed.txt" 
+    };
+    for (int i = 0; i < HUDELEMENTCOUNT; i++) {
+        elements[i] = elements_[i];
+        elements[i].elementIndex = i;
+    }
 }
 
-void DrawHud(int windowHeight, int windowWidth) {
+void DrawHud() {
     for (int i = 0; i < HUDELEMENTCOUNT; i++) {
         if (!elements[i].isHidden) {
             if (elements[i].texture.id != 0)
                 DrawTexturePro(elements[i].texture, (Rectangle){0,0,1000,1000}, (Rectangle) {elements[i].pos.x, elements[i].pos.y, elements[i].width, elements[i].height }, (Vector2){}, elements[i].rotation, WHITE);
             else
-                DrawRectangleV(elements[i].pos,(Vector2) {elements[i].pos.x, elements[i].pos.y}, DARKBLUE);
+                DrawRectangleV(elements[i].pos,(Vector2) {elements[i].width, elements[i].height}, DARKBLUE);
             //SetWindowPosition((GetMonitorWidth(0) + 1000) * (GetTime() / 4 - floor(GetTime() / 4)) - 1000, 200 * sin(GetTime() * 4) + GetMonitorHeight(0) / 2 - 600 / 2);
         }
     }

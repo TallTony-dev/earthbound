@@ -40,6 +40,6 @@ void InitializeEntity(Entity *entity, float health, float attackPow, float defen
 
 
 void UpdateGame();
-void DrawGame(int windowHeight, int windowWidth);
+void DrawGame();
 void InitializeGame();
 #endif //gameh

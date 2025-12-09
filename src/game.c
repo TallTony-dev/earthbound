@@ -5,7 +5,7 @@
 #include "game.h"
 #include "hud.h"
 
-void DrawBackground(int windowHeight, int windowWidth);
+void DrawBackground();
 void DrawEnemies();
 
 Entity player;
@@ -60,9 +60,9 @@ void UpdateGame() {
     prevGameState = gameState;
 }
 
-void DrawGame(int windowHeight, int windowWidth) {
-    DrawBackground(windowHeight, windowWidth);
-    DrawHud(windowHeight, windowWidth);
+void DrawGame() {
+    DrawBackground();
+    DrawHud();
     DrawEnemies();
     if (gameState == INBATTLESTATE) {
 
@@ -123,8 +123,9 @@ void InitializeGame() {
        
 }
 
-void DrawBackground(int windowHeight, int windowWidth) {
-	
+void DrawBackground() {
+	int windowHeight = GetScreenHeight();
+    int windowWidth = GetScreenWidth();
 	BeginShaderMode(bgShaders[currentBGShaderIndex]);
 	float totalTime = GetTime();
 	Vector2 mousePos = GetMousePosition();

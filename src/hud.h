@@ -31,7 +31,7 @@ typedef struct hudelementstruct
 void CheckClick(Vector2 mousePos);
 void CheckHover(Vector2 mousePos);
 void InitializeHud();
-void DrawHud(int windowHeight, int windowWidth);
+void DrawHud();
 
 //pass in macros to get indices
 void DeactivateElement(int element);
