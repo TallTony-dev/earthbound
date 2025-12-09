@@ -72,18 +72,22 @@ void DrawGame() {
 }
 
 void DrawEnemies() {
+    float xscale = GetScreenWidth() / HUDWIDTH;
+    float yscale = GetScreenHeight() / HUDHEIGHT;
+    float totalTime = GetTime();
+
     int activeEnemies = BattleEnemiesCount();
 
-    int xpadding = 200;
+    int xpadding = 200 * xscale;
     int xSpacing = (GetScreenWidth() - xpadding * 2) / activeEnemies;
     int yPos = 0;
-    int width = 400;
-    int height = 500;
+    int width = 1000 * xscale;
+    int height = 800 * yscale;
     for(int i = 0; i < activeEnemies; i++) {
         int xPos = i * xSpacing + xpadding;
         Entity enemy = battleEnemies[i];
 
-        float totalTime = GetTime();
+
         Vector2 widthheight = (Vector2){width,height};
         SetShaderValue(enemyShaders[enemy.typeIndex], GetShaderLocation(enemyShaders[enemy.typeIndex], "totalTime"), &totalTime, SHADER_UNIFORM_FLOAT);
 

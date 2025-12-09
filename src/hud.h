@@ -2,6 +2,9 @@
 #define hudh 0
 #include "../raylib/src/raylib.h"
 
+#define HUDWIDTH 1600.0f
+#define HUDHEIGHT 900.0f
+
 #define HUDELEMENTCOUNT 4
 
 #define HUD_ATTACKBTN 0

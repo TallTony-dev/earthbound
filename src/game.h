@@ -38,7 +38,6 @@ void InitializeEntity(Entity *entity, float health, float attackPow, float defen
 #define INMAPSTATE 1
 #define INBATTLESTATE 2
 
-
 void UpdateGame();
 void DrawGame();
 void InitializeGame();

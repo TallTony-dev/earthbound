@@ -11,22 +11,30 @@ void InitializeHud() {
     for (int i = 0; i < HUDELEMENTCOUNT; i++) {
         elements[i] = elements_[i];
         elements[i].elementIndex = i;
-    }
+    }\
 }
 
 void DrawHud() {
+    float xscale = GetScreenWidth() / HUDWIDTH;
+    float yscale = GetScreenHeight() / HUDHEIGHT;
+
     for (int i = 0; i < HUDELEMENTCOUNT; i++) {
         if (!elements[i].isHidden) {
             if (elements[i].texture.id != 0)
-                DrawTexturePro(elements[i].texture, (Rectangle){0,0,1000,1000}, (Rectangle) {elements[i].pos.x, elements[i].pos.y, elements[i].width, elements[i].height }, (Vector2){}, elements[i].rotation, WHITE);
+                DrawTexturePro(elements[i].texture, (Rectangle){0,0,0,0}, (Rectangle) {elements[i].pos.x * xscale, elements[i].pos.y * yscale, elements[i].width * xscale, elements[i].height * yscale}, (Vector2){}, elements[i].rotation, WHITE);
             else
-                DrawRectangleV(elements[i].pos,(Vector2) {elements[i].width, elements[i].height}, DARKBLUE);
+                DrawRectangleV((Vector2) {elements[i].pos.x * xscale, elements[i].pos.y * yscale}
+                ,(Vector2) {elements[i].width * xscale, elements[i].height * yscale}, DARKBLUE);
             //SetWindowPosition((GetMonitorWidth(0) + 1000) * (GetTime() / 4 - floor(GetTime() / 4)) - 1000, 200 * sin(GetTime() * 4) + GetMonitorHeight(0) / 2 - 600 / 2);
         }
     }
 }
 
 void CheckClick(Vector2 mousePos) {
+    float xscale = HUDWIDTH / GetScreenWidth();
+    float yscale = HUDHEIGHT / GetScreenHeight();
+    mousePos.x *= xscale;
+    mousePos.y *= yscale;
     for (int i = 0; i < HUDELEMENTCOUNT; i++) {
         if (elements[i].isActive && elements[i].onClickFunction != 0) {
             if (elements[i].rotation == 0) {
@@ -38,6 +46,10 @@ void CheckClick(Vector2 mousePos) {
 }
 
 void CheckHover(Vector2 mousePos) {
+    float xscale = HUDWIDTH / GetScreenWidth();
+    float yscale = HUDHEIGHT / GetScreenHeight();
+    mousePos.x *= xscale;
+    mousePos.y *= yscale;
     for (int i = 0; i < HUDELEMENTCOUNT; i++) {
         if (elements[i].isActive && elements[i].onHoverFunction != 0) {
             if (elements[i].rotation == 0) {
