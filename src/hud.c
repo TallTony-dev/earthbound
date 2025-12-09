@@ -11,7 +11,7 @@ void InitializeHud() {
     elements[0].pos = (Vector2){100,100};
     elements[0].width = 500;
     elements[0].height = 250;
-    elements[0].texture = LoadTexture("../resources/textures/testrocks.png");
+    elements[0].texture = LoadTexture(TextFormat("%s%s", GetApplicationDirectory(), "../resources/textures/testrocks.png"));
     elements[0].isActive = true;
     elements[0].onClickFunction = ToggleElementVis; //always has elementindex passed in
     elements[0].onHoverFunction = ToggleElementVis;

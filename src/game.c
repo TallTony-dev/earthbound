@@ -1,15 +1,29 @@
 #include "../raylib/src/raylib.h"
 #include "../raylib/src/raymath.h"
+#include "../raylib/src/rlgl.h"
+#include <stdarg.h>
 #include "game.h"
 #include "hud.h"
 
 void DrawBackground(int windowHeight, int windowWidth);
+void DrawEnemies();
+
+Entity player;
 
 
-int gameState = 0; //macros defined in game.h
+Shader enemyShaders[ENEMYINDEXCOUNT];
+Texture2D enemyTextures[ENEMYINDEXCOUNT];
+
+#define BATTLEENEMIESLENGTH 5
+Entity battleEnemies[BATTLEENEMIESLENGTH];
+void RemoveFromBattleEnemies(int index) {battleEnemies[index].typeIndex = -2;}
+void RemoveAllFromBattleEnemies() {for(int i = 0; i < BATTLEENEMIESLENGTH; i++) battleEnemies[i].typeIndex = -2;}
+int BattleEnemiesCount() { int count; while ( count < 5 && battleEnemies[count].typeIndex != -2) count++; return count;}
+
+
+int gameState = INBATTLESTATE; //macros defined in game.h
 void SetGameState(int state) {gameState = state;}
-
-int prevGameState;
+int prevGameState = -1;
 
 void UpdateGame() {
     if (IsMouseButtonPressed(0))
@@ -24,17 +38,24 @@ void UpdateGame() {
 
     //now update things/hud based off of gamestate
     if (isFirst) {
-        if (gameState == MAINMENU) {
+        if (gameState == MAINMENUSTATE) {
             ActivateElement(HUD_STARTBTN);
             ShowElement(HUD_STARTBTN);
-            
-        } else if (prevGameState == MAINMENU) {
+        } else if (prevGameState == MAINMENUSTATE) {
             DeactivateElement(HUD_STARTBTN);
             HideElement(HUD_STARTBTN);
         }
+        if (gameState == INBATTLESTATE) {
+            ActivateElement(HUD_ATTACKBTN);
+            ActivateElement(HUD_HEALTHBAR);
+            ActivateElement(HUD_SNOOZEBAR);
+            ActivateElement(HUD_ITEMBTN);
+        }
     }
     else {
-        
+        if (gameState == INBATTLESTATE) {
+            
+        }
     }
     prevGameState = gameState;
 }
@@ -42,10 +63,39 @@ void UpdateGame() {
 void DrawGame(int windowHeight, int windowWidth) {
     DrawBackground(windowHeight, windowWidth);
     DrawHud(windowHeight, windowWidth);
+    DrawEnemies();
+    if (gameState == INBATTLESTATE) {
+
+    }
     //int timeToCross = 4;
     //SetWindowPosition((GetMonitorWidth(0) + windowWidth) * (GetTime() / timeToCross - floor(GetTime() / timeToCross)) - windowWidth, 200 * sin(GetTime() * 4) + GetMonitorHeight(0) / 2 - windowHeight / 2);
 }
 
+void DrawEnemies() {
+    int activeEnemies = BattleEnemiesCount();
+
+    int xpadding = 200;
+    int xSpacing = (GetScreenWidth() - xpadding * 2) / activeEnemies;
+    int yPos = 0;
+    int width = 400;
+    int height = 500;
+    for(int i = 0; i < activeEnemies; i++) {
+        int xPos = i * xSpacing + xpadding;
+        Entity enemy = battleEnemies[i];
+
+        float totalTime = GetTime();
+        Vector2 widthheight = (Vector2){width,height};
+        SetShaderValue(enemyShaders[enemy.typeIndex], GetShaderLocation(enemyShaders[enemy.typeIndex], "totalTime"), &totalTime, SHADER_UNIFORM_FLOAT);
+
+        BeginShaderMode(enemyShaders[enemy.typeIndex]);
+        
+        if (enemyTextures[enemy.typeIndex].id != 0)
+            DrawTexturePro(enemyTextures[enemy.typeIndex],(struct Rectangle) {0,0,4160,3120} ,(struct Rectangle) {xPos,yPos,xPos + width,xPos + height}, (struct Vector2) {0, 0}, 0.0f, BLACK);
+        else 
+            DrawRectangleV((Vector2){xPos, yPos},(Vector2){width, height}, BLACK);
+        EndShaderMode();
+    }
+}
 
 #define bgShaderCount 2
 Shader bgShaders[bgShaderCount];
@@ -55,10 +105,22 @@ Texture2D testTex;
 Vector2 laggardMousePos;
 
 void InitializeGame() {
-    testTex = LoadTexture("../resources/textures/testrocks.png");
+    testTex = LoadTexture(TextFormat("%s%s", GetApplicationDirectory(), "../resources/textures/testrocks.png"));
+    Texture2D texture = { rlGetTextureIdDefault(), 1, 1, 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
+
+    SetShapesTexture(texture, (Rectangle){ 0.0f, 0.0f, 1.0f, 1.0f });
+    for (int i = 0; i < BATTLEENEMIESLENGTH; i++) 
+        battleEnemies[i].typeIndex = -2;
+    InitializeEntity(&player, 100, 10, 10, PLAYERTYPE, PATTACKDANCE, PATTACKSPAM, -1, -1);
     InitializeHud();
+
+    InitializeEntity(battleEnemies, 100, 10, 10, ENEMYGLEEBTYPE, EATTACKJAB, EATTACKSPIN, -1, -1);
+
 	for (int i = 0; i < bgShaderCount; i++)
 		bgShaders[i] = LoadShader(0, TextFormat("%s%s", GetApplicationDirectory(), TextFormat("../resources/shaders/background%i.fs", i)));
+    for (int i = 0; i < ENEMYINDEXCOUNT; i++)
+ 		enemyShaders[i] = LoadShader(0, TextFormat("%s%s", GetApplicationDirectory(), TextFormat("../resources/shaders/enemy%i.fs", i)));
+       
 }
 
 void DrawBackground(int windowHeight, int windowWidth) {
@@ -76,4 +138,16 @@ void DrawBackground(int windowHeight, int windowWidth) {
 	laggardMousePos.y += 3 * GetFrameTime() * (mousePos.y - laggardMousePos.y);
 	DrawTexturePro(testTex,(struct Rectangle) {0,0,4160,3120} ,(struct Rectangle) {0,0,windowWidth,windowHeight}, (struct Vector2) {0, 0}, 0.0f, BLACK);
 	EndShaderMode();
+}
+
+void InitializeEntity(Entity *entity, float health, float attackPow, float defence, int type, int attack1, int attack2, int attack3, int attack4) {
+    entity->health = health;
+    entity->maxHealth = health;
+    entity->attackPower = attackPow;
+    entity->defence = defence;
+    entity->typeIndex = type;
+    entity->attack1 = attack1;
+    entity->attack2 = attack2;
+    entity->attack3 = attack3;
+    entity->attack4 = attack4;
 }

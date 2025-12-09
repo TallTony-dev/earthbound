@@ -52,6 +52,6 @@ void main() {
 
     uv.x -= (1 - fragTexCoord.y) * (-fragTexCoord.x + 0.5) * (sin(totalTime * 0.2) * 0.5 + 0.5); //convergence
 
-    uv.x += 0.4 * sin(fragTexCoord.y + totalTime * 0.2) + totalTime * 0.2 * sin(totalTime * 0.05);
+    uv.x += 0.4 * sin(fragTexCoord.y + totalTime * 0.2) + sin(totalTime * 0.05);
     finalColor.rgb -= texture(texture0, uv).rgb * 0.8;
 }

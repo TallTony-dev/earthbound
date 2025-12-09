@@ -20,9 +20,9 @@ typedef struct hudelementstruct
     Texture2D texture;
     bool isActive;
     bool isHidden;
-    void (*onClickFunction)(); //do something when clicked
-    void (*onHoverFunction)(); //do something when hovered
-    void (*unHoverFunction)(); //do something when unhovered
+    void (*onClickFunction)(int buttonIndex); //do something when clicked
+    void (*onHoverFunction)(int buttonIndex); //do something when hovered
+    void (*unHoverFunction)(int buttonIndex); //do something when unhovered
     bool wasHovered;
     int elementIndex;
     
