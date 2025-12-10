@@ -12,6 +12,7 @@ typedef struct {
     int attack3;
     int attack4; //default attack to -1 to not exist
     int typeIndex; //for textures/anims
+    float timeWhenDamaged;
 } Entity;
 void InitializeEntity(Entity *entity, float health, float attackPow, float defence, int type, int attack1, int attack2, int attack3, int attack4);
 
@@ -41,4 +42,10 @@ void InitializeEntity(Entity *entity, float health, float attackPow, float defen
 void UpdateGame();
 void DrawGame();
 void InitializeGame();
+
+
+int BattleEnemiesCount(); //gets number of active battle enemies
+void UseAttackOnEnemy(int enemyIndex, int attackNum);
+
+
 #endif //gameh

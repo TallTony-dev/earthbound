@@ -1,7 +1,35 @@
-//note that width and height are mapped from y x z to the actual screenres
+//note that width and height are mapped from 1600 x 900 to the actual screenres
 { //attackbutton
-    .pos = {100,100},
-    .height = 788,
+    .pos = {500,400},
+    .height = 200,
+    .width = 200,
+    .rotation = 0,
+    .texture = 0,
+    .isActive = true,
+    .isHidden = false,
+    .onClickFunction = ToggleElementVis,
+    .onHoverFunction = ToggleElementVis,
+    .unHoverFunction = ToggleElementVis,
+    .onClickParam1 = -1,
+    .onClickParam2 = -1
+},
+{ //itembutton
+    .pos = {800,400},
+    .height = 200,
+    .width = 200,
+    .rotation = 0,
+    .texture = 0,
+    .isActive = true,
+    .isHidden = false,
+    .onClickFunction = ToggleElementVis,
+    .onHoverFunction = ToggleElementVis,
+    .unHoverFunction = ToggleElementVis,
+    .onClickParam1 = -1,
+    .onClickParam2 = -1
+},
+{ //healthMeter
+    .pos = {00,300},
+    .height = 100,
     .width = 300,
     .rotation = 0,
     .texture = 0,
@@ -9,9 +37,11 @@
     .isHidden = false,
     .onClickFunction = ToggleElementVis,
     .onHoverFunction = ToggleElementVis,
-    .unHoverFunction = ToggleElementVis
+    .unHoverFunction = ToggleElementVis,
+    .onClickParam1 = -1,
+    .onClickParam2 = -1
 },
-{ //itembutton
+{ //snoozeButton
     .pos = {300,300},
     .height = 100,
     .width = 300,
@@ -21,6 +51,78 @@
     .isHidden = false,
     .onClickFunction = ToggleElementVis,
     .onHoverFunction = ToggleElementVis,
-    .unHoverFunction = ToggleElementVis
+    .unHoverFunction = ToggleElementVis,
+    .onClickParam1 = -1,
+    .onClickParam2 = -1
+},
+{ //main menu startButton
+    .pos = {300,300},
+    .height = 100,
+    .width = 300,
+    .rotation = 0,
+    .texture = 0,
+    .isActive = true,
+    .isHidden = false,
+    .onClickFunction = ToggleElementVis,
+    .onHoverFunction = ToggleElementVis,
+    .unHoverFunction = ToggleElementVis,
+    .onClickParam1 = -1,
+    .onClickParam2 = -1
+},
+{ //attackButton1
+    .pos = {0,700},
+    .height = 200,
+    .width = 300,
+    .rotation = 0,
+    .texture = LoadTexture(TextFormat("%s%s", GetApplicationDirectory(), "../resources/textures/testrocks.png")),
+    .isActive = true,
+    .isHidden = false,
+    .onClickFunction = UseAttackOnEnemy,
+    .onHoverFunction = ToggleElementVis,
+    .unHoverFunction = ToggleElementVis,
+    .onClickParam1 = 0, //enemyindex
+    .onClickParam2 = 1 //attacknumber
+},
+{ //attackButton2
+    .pos = {450,700},
+    .height = 200,
+    .width = 300,
+    .rotation = 0,
+    .texture = 0,
+    .isActive = true,
+    .isHidden = false,
+    .onClickFunction = ToggleElementVis,
+    .onHoverFunction = ToggleElementVis,
+    .unHoverFunction = ToggleElementVis,
+    .onClickParam1 = -1,
+    .onClickParam2 = -1
+},
+{ //attackButton3
+    .pos = {850,700},
+    .height = 200,
+    .width = 300,
+    .rotation = 0,
+    .texture = 0,
+    .isActive = true,
+    .isHidden = false,
+    .onClickFunction = ToggleElementVis,
+    .onHoverFunction = ToggleElementVis,
+    .unHoverFunction = ToggleElementVis,
+    .onClickParam1 = -1,
+    .onClickParam2 = -1
+},
+{ //attackButton4
+    .pos = {1300,700},
+    .height = 200,
+    .width = 300,
+    .rotation = 0,
+    .texture = 0,
+    .isActive = true,
+    .isHidden = false,
+    .onClickFunction = ToggleElementVis,
+    .onHoverFunction = ToggleElementVis,
+    .unHoverFunction = ToggleElementVis,
+    .onClickParam1 = -1,
+    .onClickParam2 = -1
 }
 

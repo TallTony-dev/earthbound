@@ -1,7 +1,59 @@
 #include "hud.h"
+#include "game.h"
 #include "../raylib/src/raymath.h"
 
 HudElement elements[HUDELEMENTCOUNT];
+
+/// @brief enables the whole element, both shows and activates 
+void EnableElement(int element) {
+    elements[element].isActive = true;
+    elements[element].isHidden = false;
+}
+/// @brief counterpart to enableelement, hides and deactivates
+void DisableElement(int element) {
+    elements[element].isActive = false;
+    elements[element].isHidden = true;
+}
+void ActivateElement(int element) {
+    elements[element].isActive = true;
+}
+void DeactivateElement(int element) {
+    elements[element].isActive = false;
+}
+void ToggleElementActive(int element) {
+    elements[element].isActive = !elements[element].isActive;
+}
+void ShowElement(int element) {
+    elements[element].isHidden = false;
+}
+void HideElement(int element) {
+    elements[element].isHidden = true;
+}
+void ToggleElementVis(int element) {
+    elements[element].isHidden = !elements[element].isHidden;
+}
+
+
+#define BOUTOFBATTLE -1
+#define BPLAYERTURN 0
+#define BITEMSCREEN 1
+#define BATTACKSCREEN 2
+#define BINACTION 3
+int hudBattleState = BOUTOFBATTLE;
+int prevHudBattleState = BOUTOFBATTLE;
+
+void SetBattleStatePlayerTurn() {hudBattleState = BPLAYERTURN; }
+void SetBattleStateItemScreen() {hudBattleState = BITEMSCREEN; }
+void SetBattleStateAttackScreen() {hudBattleState = BATTACKSCREEN; }
+void SetBattleStateInAction() {hudBattleState = BINACTION; }
+
+void EnterBattleState() {
+    hudBattleState = BPLAYERTURN;
+}
+
+void ExitBattleState() {
+    hudBattleState = BOUTOFBATTLE;
+}
 
 void InitializeHud() {
 
@@ -11,7 +63,55 @@ void InitializeHud() {
     for (int i = 0; i < HUDELEMENTCOUNT; i++) {
         elements[i] = elements_[i];
         elements[i].elementIndex = i;
-    }\
+    }
+}
+
+void UpdateHud() {
+    //manage battlestate
+    bool isFirst = false;
+    if (prevHudBattleState != hudBattleState)
+        isFirst = true;
+    if (isFirst) {
+        if (hudBattleState == BPLAYERTURN) {
+            //enable the choice between attack and item and show most things
+            EnableElement(HUD_BATTACKBTN);
+            EnableElement(HUD_BHEALTHBAR);
+            EnableElement(HUD_BSNOOZEBAR);
+            EnableElement(HUD_BITEMBTN);
+        } else if (prevHudBattleState == BPLAYERTURN) {
+            //disable anything it enables
+            DisableElement(HUD_BATTACKBTN);
+            DisableElement(HUD_BHEALTHBAR);
+            DisableElement(HUD_BSNOOZEBAR);
+            DisableElement(HUD_BITEMBTN);
+        }
+
+        if (hudBattleState == BITEMSCREEN) {
+            //enable item display/inventory
+        } else if (prevHudBattleState == BITEMSCREEN) {
+            //disable anything it enables
+        }
+
+        if (hudBattleState == BATTACKSCREEN) {
+            //enable attack buttons
+            EnableElement(HUD_BATTACK1BTN);
+            EnableElement(HUD_BATTACK2BTN);
+            EnableElement(HUD_BATTACK3BTN);
+            EnableElement(HUD_BATTACK4BTN);
+        } else if (prevHudBattleState == BATTACKSCREEN) {
+            //disable anything it enables
+            DisableElement(HUD_BATTACK1BTN);
+            DisableElement(HUD_BATTACK2BTN);
+            DisableElement(HUD_BATTACK3BTN);
+            DisableElement(HUD_BATTACK4BTN);
+        }
+
+        if (hudBattleState == BINACTION) {
+            //disable most elements
+        } else if (prevHudBattleState == BINACTION) {
+            //disable anything it enables
+        }
+    }
 }
 
 void DrawHud() {
@@ -21,7 +121,7 @@ void DrawHud() {
     for (int i = 0; i < HUDELEMENTCOUNT; i++) {
         if (!elements[i].isHidden) {
             if (elements[i].texture.id != 0)
-                DrawTexturePro(elements[i].texture, (Rectangle){0,0,0,0}, (Rectangle) {elements[i].pos.x * xscale, elements[i].pos.y * yscale, elements[i].width * xscale, elements[i].height * yscale}, (Vector2){}, elements[i].rotation, WHITE);
+                DrawTexturePro(elements[i].texture, (Rectangle){0,0,elements[i].texture.width,elements[i].texture.height}, (Rectangle) {elements[i].pos.x * xscale, elements[i].pos.y * yscale, elements[i].width * xscale, elements[i].height * yscale}, (Vector2){}, elements[i].rotation, WHITE);
             else
                 DrawRectangleV((Vector2) {elements[i].pos.x * xscale, elements[i].pos.y * yscale}
                 ,(Vector2) {elements[i].width * xscale, elements[i].height * yscale}, DARKBLUE);
@@ -38,8 +138,14 @@ void CheckClick(Vector2 mousePos) {
     for (int i = 0; i < HUDELEMENTCOUNT; i++) {
         if (elements[i].isActive && elements[i].onClickFunction != 0) {
             if (elements[i].rotation == 0) {
-                if (mousePos.x > elements[i].pos.x && mousePos.x < elements[i].pos.x + elements[i].width && mousePos.y > elements[i].pos.y && mousePos.y < elements[i].pos.y + elements[i].height)
-                    elements[i].onClickFunction(elements[i].elementIndex);
+                if (mousePos.x > elements[i].pos.x && mousePos.x < elements[i].pos.x + elements[i].width && mousePos.y > elements[i].pos.y && mousePos.y < elements[i].pos.y + elements[i].height) {
+                    if (elements[i].onClickParam1 != -1 && elements[i].onClickParam2 != -1)
+                        ((void (*)(int, int))elements[i].onClickFunction)(elements[i].onClickParam1, elements[i].onClickParam2);
+                    else if (elements[i].onClickParam1 != -1)
+                        ((void (*)(int))elements[i].onClickFunction)(elements[i].onClickParam1);
+                    else 
+                        ((void (*)(int))elements[i].onClickFunction)(i);
+                }
             }
         }
     }
@@ -67,23 +173,4 @@ void CheckHover(Vector2 mousePos) {
             }
         }
     }
-}
-
-void ActivateElement(int element) {
-    elements[element].isActive = true;
-}
-void DeactivateElement(int element) {
-    elements[element].isActive = false;
-}
-void ToggleElementActive(int element) {
-    elements[element].isActive = !elements[element].isActive;
-}
-void ShowElement(int element) {
-    elements[element].isHidden = false;
-}
-void HideElement(int element) {
-    elements[element].isHidden = true;
-}
-void ToggleElementVis(int element) {
-    elements[element].isHidden = !elements[element].isHidden;
 }

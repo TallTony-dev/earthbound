@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include "game.h"
 #include "hud.h"
+#include "attacks.h" //including because it is/will be a long and hellish switch case ;3
 
 void DrawBackground();
 void DrawEnemies();
@@ -21,10 +22,20 @@ void RemoveAllFromBattleEnemies() {for(int i = 0; i < BATTLEENEMIESLENGTH; i++) 
 int BattleEnemiesCount() { int count; while ( count < 5 && battleEnemies[count].typeIndex != -2) count++; return count;}
 
 
-int gameState = INBATTLESTATE; //macros defined in game.h
-void SetGameState(int state) {gameState = state;}
-int prevGameState = -1;
+void UseAttackOnEnemy(int enemyIndex, int attackNum) {
+    if (attackNum == 1)
+        AttackEnemy(battleEnemies + enemyIndex, player.attack1);
+    else if (attackNum == 2)
+        AttackEnemy(battleEnemies + enemyIndex, player.attack2);
+    else if (attackNum == 3)
+        AttackEnemy(battleEnemies + enemyIndex, player.attack3);
+    else
+        AttackEnemy(battleEnemies + enemyIndex, player.attack4);
+}
 
+int mainGameState = INBATTLESTATE; //macros defined in game.h
+void SetGameState(int state) {mainGameState = state;}
+int prevGameState = -1;
 void UpdateGame() {
     if (IsMouseButtonPressed(0))
         CheckClick(GetMousePosition());
@@ -32,39 +43,38 @@ void UpdateGame() {
         CheckHover(GetMousePosition());
     
     bool isFirst = false;
-    if (prevGameState != gameState) {
+    if (prevGameState != mainGameState) {
         isFirst = true;
     }
 
     //now update things/hud based off of gamestate
     if (isFirst) {
-        if (gameState == MAINMENUSTATE) {
-            ActivateElement(HUD_STARTBTN);
-            ShowElement(HUD_STARTBTN);
+        if (mainGameState == MAINMENUSTATE) {
+            //ActivateElement(HUD_STARTBTN);
+            // ShowElement(HUD_STARTBTN);
         } else if (prevGameState == MAINMENUSTATE) {
-            DeactivateElement(HUD_STARTBTN);
-            HideElement(HUD_STARTBTN);
+            //DeactivateElement(HUD_STARTBTN);
+            //HideElement(HUD_STARTBTN);
         }
-        if (gameState == INBATTLESTATE) {
-            ActivateElement(HUD_ATTACKBTN);
-            ActivateElement(HUD_HEALTHBAR);
-            ActivateElement(HUD_SNOOZEBAR);
-            ActivateElement(HUD_ITEMBTN);
+        if (mainGameState == INBATTLESTATE) {
+            EnterBattleState();
+        } else if (prevGameState == INBATTLESTATE) {
+            ExitBattleState();
         }
     }
     else {
-        if (gameState == INBATTLESTATE) {
-            
+        if (mainGameState == INBATTLESTATE) {
+
         }
     }
-    prevGameState = gameState;
+    prevGameState = mainGameState;
 }
 
 void DrawGame() {
     DrawBackground();
     DrawHud();
     DrawEnemies();
-    if (gameState == INBATTLESTATE) {
+    if (mainGameState == INBATTLESTATE) {
 
     }
     //int timeToCross = 4;
@@ -87,9 +97,10 @@ void DrawEnemies() {
         int xPos = i * xSpacing + xpadding;
         Entity enemy = battleEnemies[i];
 
-
+        float timeSinceDamaged = totalTime - enemy.timeWhenDamaged;
         Vector2 widthheight = (Vector2){width,height};
         SetShaderValue(enemyShaders[enemy.typeIndex], GetShaderLocation(enemyShaders[enemy.typeIndex], "totalTime"), &totalTime, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(enemyShaders[enemy.typeIndex], GetShaderLocation(enemyShaders[enemy.typeIndex], "timeSinceDamaged"), &timeSinceDamaged, SHADER_UNIFORM_FLOAT);
 
         BeginShaderMode(enemyShaders[enemy.typeIndex]);
         
