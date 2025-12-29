@@ -1,6 +1,7 @@
 #ifndef hudh
 #define hudh 0
 #include "../raylib/src/raylib.h"
+#include <functional>
 
 #define HUDWIDTH 1600.0f
 #define HUDHEIGHT 900.0f
@@ -21,24 +22,23 @@
 
 
 
-typedef struct hudelementstruct
+class HudElement
 {
-    Vector2 pos;
-    int height;
-    int width;
-    float rotation;
-    Texture2D texture;
-    bool isActive;
-    bool isHidden;
-    int onClickParam1;
-    int onClickParam2;
-    void *onClickFunction; //do something when clicked
-    void (*onHoverFunction)(int buttonIndex); //do something when hovered
-    void (*unHoverFunction)(int buttonIndex); //do something when unhovered
-    bool wasHovered;
-    int elementIndex;
+    public: //transitioning from a struct so everything is public for now :/ sorry gang
+        Vector2 pos;
+        float height;
+        float width;
+        float rotation;
+        Texture2D texture;
+        bool isActive;
+        bool isHidden;
+        std::function<void()> onClickFunction; //do something when clicked
+        std::function<void()> onHoverFunction; //do something when hovered
+        std::function<void()> unHoverFunction; //do something when unhovered
+        bool wasHovered;
+        int elementIndex;
     
-} HudElement;
+};
 
 void CheckClick(Vector2 mousePos);
 void CheckHover(Vector2 mousePos);

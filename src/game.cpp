@@ -1,41 +1,35 @@
+
 #include "../raylib/src/raylib.h"
 #include "../raylib/src/raymath.h"
 #include "../raylib/src/rlgl.h"
 #include <stdarg.h>
-#include "game.h"
-#include "hud.h"
-#include "attacks.h" //including because it is/will be a long and hellish switch case ;3
+#include "game.hpp"
+#include "hud.hpp"
+#include "entity.hpp"
 
 void DrawBackground();
 void DrawEnemies();
 
-Entity player;
+Entity *player = new Entity(100, 10, 10, PATTACKDANCE, PATTACKSPAM);
 
 
-Shader enemyShaders[ENEMYINDEXCOUNT];
-Texture2D enemyTextures[ENEMYINDEXCOUNT];
+#define ENEMYSHADERCOUNT 1
+Shader enemyShaders[ENEMYSHADERCOUNT];
 
 #define BATTLEENEMIESLENGTH 5
-Entity battleEnemies[BATTLEENEMIESLENGTH];
-void RemoveFromBattleEnemies(int index) {battleEnemies[index].typeIndex = -2;}
-void RemoveAllFromBattleEnemies() {for(int i = 0; i < BATTLEENEMIESLENGTH; i++) battleEnemies[i].typeIndex = -2;}
-int BattleEnemiesCount() { int count; while ( count < 5 && battleEnemies[count].typeIndex != -2) count++; return count;}
-
+Entity *battleEnemies[BATTLEENEMIESLENGTH];
+void RemoveFromBattleEnemies(int index) {battleEnemies[index] = nullptr;}
+void RemoveAllFromBattleEnemies() {for(int i = 0; i < BATTLEENEMIESLENGTH; i++) battleEnemies[i] = nullptr;}
+int BattleEnemiesCount() { int count; while ( count < 5 && battleEnemies[count] != nullptr) count++; return count;}
 
 void UseAttackOnEnemy(int enemyIndex, int attackNum) {
-    if (attackNum == 1)
-        AttackEnemy(battleEnemies + enemyIndex, player.attack1);
-    else if (attackNum == 2)
-        AttackEnemy(battleEnemies + enemyIndex, player.attack2);
-    else if (attackNum == 3)
-        AttackEnemy(battleEnemies + enemyIndex, player.attack3);
-    else
-        AttackEnemy(battleEnemies + enemyIndex, player.attack4);
+    battleEnemies[enemyIndex]->GetAttackedBy(attackNum);
 }
 
 int mainGameState = INBATTLESTATE; //macros defined in game.h
 void SetGameState(int state) {mainGameState = state;}
 int prevGameState = -1;
+
 void UpdateGame() {
     if (IsMouseButtonPressed(0))
         CheckClick(GetMousePosition());
@@ -90,25 +84,29 @@ void DrawEnemies() {
 
     int xpadding = 200 * xscale;
     int xSpacing = (GetScreenWidth() - xpadding * 2) / activeEnemies;
-    int yPos = 0;
-    int width = 1000 * xscale;
-    int height = 800 * yscale;
+    float yPos = 0;
+    float width = 1000 * xscale;
+    float height = 800 * yscale;
     for(int i = 0; i < activeEnemies; i++) {
-        int xPos = i * xSpacing + xpadding;
-        Entity enemy = battleEnemies[i];
+        float xPos = i * xSpacing + xpadding;
+        Entity enemy = *battleEnemies[i];
 
-        float timeSinceDamaged = totalTime - enemy.timeWhenDamaged;
-        Vector2 widthheight = (Vector2){width,height};
-        SetShaderValue(enemyShaders[enemy.typeIndex], GetShaderLocation(enemyShaders[enemy.typeIndex], "totalTime"), &totalTime, SHADER_UNIFORM_FLOAT);
-        SetShaderValue(enemyShaders[enemy.typeIndex], GetShaderLocation(enemyShaders[enemy.typeIndex], "timeSinceDamaged"), &timeSinceDamaged, SHADER_UNIFORM_FLOAT);
+        float timeSinceDamaged = totalTime - enemy.GetTimeWhenDamaged();
+        Vector2 widthheight = {width,height};
+        int shaderIndex = enemy.GetShaderIndex();
+        if (shaderIndex != EntityShader::None) {
+        SetShaderValue(enemyShaders[shaderIndex], GetShaderLocation(enemyShaders[shaderIndex], "totalTime"), &totalTime, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(enemyShaders[shaderIndex], GetShaderLocation(enemyShaders[shaderIndex], "timeSinceDamaged"), &timeSinceDamaged, SHADER_UNIFORM_FLOAT);
+        BeginShaderMode(enemyShaders[shaderIndex]);
+        }
 
-        BeginShaderMode(enemyShaders[enemy.typeIndex]);
-        
-        if (enemyTextures[enemy.typeIndex].id != 0)
-            DrawTexturePro(enemyTextures[enemy.typeIndex],(struct Rectangle) {0,0,4160,3120} ,(struct Rectangle) {xPos,yPos,xPos + width,xPos + height}, (struct Vector2) {0, 0}, 0.0f, BLACK);
+        if (enemy.GetTexture().id != 0)
+            DrawTexturePro(enemy.GetTexture(),{0,0,4160,3120} ,{xPos,yPos,xPos + width,xPos + height}, {0, 0}, 0.0f, BLACK);
         else 
-            DrawRectangleV((Vector2){xPos, yPos},(Vector2){width, height}, BLACK);
-        EndShaderMode();
+            DrawRectangleV({xPos, yPos}, {width, height}, BLACK);
+
+        if (shaderIndex != EntityShader::None)
+            EndShaderMode();
     }
 }
 
@@ -123,24 +121,21 @@ void InitializeGame() {
     testTex = LoadTexture(TextFormat("%s%s", GetApplicationDirectory(), "../resources/textures/testrocks.png"));
     Texture2D texture = { rlGetTextureIdDefault(), 1, 1, 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
 
-    SetShapesTexture(texture, (Rectangle){ 0.0f, 0.0f, 1.0f, 1.0f });
-    for (int i = 0; i < BATTLEENEMIESLENGTH; i++) 
-        battleEnemies[i].typeIndex = -2;
-    InitializeEntity(&player, 100, 10, 10, PLAYERTYPE, PATTACKDANCE, PATTACKSPAM, -1, -1);
+    SetShapesTexture(texture, {0.0f, 0.0f, 1.0f, 1.0f });
     InitializeHud();
 
-    InitializeEntity(battleEnemies, 100, 10, 10, ENEMYGLEEBTYPE, EATTACKJAB, EATTACKSPIN, -1, -1);
+    battleEnemies[0] = new Entity(100, 10, 10, EATTACKJAB, EATTACKSPIN);
 
 	for (int i = 0; i < bgShaderCount; i++)
 		bgShaders[i] = LoadShader(0, TextFormat("%s%s", GetApplicationDirectory(), TextFormat("../resources/shaders/background%i.fs", i)));
-    for (int i = 0; i < ENEMYINDEXCOUNT; i++)
+    for (int i = 0; i < ENEMYSHADERCOUNT; i++)
  		enemyShaders[i] = LoadShader(0, TextFormat("%s%s", GetApplicationDirectory(), TextFormat("../resources/shaders/enemy%i.fs", i)));
        
 }
 
 void DrawBackground() {
-	int windowHeight = GetScreenHeight();
-    int windowWidth = GetScreenWidth();
+	float windowHeight = GetScreenHeight();
+    float windowWidth = GetScreenWidth();
 	BeginShaderMode(bgShaders[currentBGShaderIndex]);
 	float totalTime = GetTime();
 	Vector2 mousePos = GetMousePosition();
@@ -152,18 +147,6 @@ void DrawBackground() {
     }
 	laggardMousePos.x += 3 * GetFrameTime() * (mousePos.x - laggardMousePos.x);
 	laggardMousePos.y += 3 * GetFrameTime() * (mousePos.y - laggardMousePos.y);
-	DrawTexturePro(testTex,(struct Rectangle) {0,0,4160,3120} ,(struct Rectangle) {0,0,windowWidth,windowHeight}, (struct Vector2) {0, 0}, 0.0f, BLACK);
+	DrawTexturePro(testTex,{0,0,4160,3120} ,{0,0,windowWidth,windowHeight}, {0, 0}, 0.0f, BLACK);
 	EndShaderMode();
-}
-
-void InitializeEntity(Entity *entity, float health, float attackPow, float defence, int type, int attack1, int attack2, int attack3, int attack4) {
-    entity->health = health;
-    entity->maxHealth = health;
-    entity->attackPower = attackPow;
-    entity->defence = defence;
-    entity->typeIndex = type;
-    entity->attack1 = attack1;
-    entity->attack2 = attack2;
-    entity->attack3 = attack3;
-    entity->attack4 = attack4;
 }

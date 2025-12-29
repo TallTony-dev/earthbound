@@ -1,6 +1,6 @@
 #include "../raylib/src/raylib.h"
 #include "../raylib/src/raymath.h"
-#include "game.h"
+#include "game.hpp"
 // #if defined(PLATFORM_DESKTOP)
     #define GLSL_VERSION            330
 // #else   // PLATFORM_ANDROID, PLATFORM_WEB

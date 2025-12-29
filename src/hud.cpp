@@ -1,5 +1,5 @@
-#include "hud.h"
-#include "game.h"
+#include "hud.hpp"
+#include "game.hpp"
 #include "../raylib/src/raymath.h"
 
 HudElement elements[HUDELEMENTCOUNT];
@@ -121,10 +121,10 @@ void DrawHud() {
     for (int i = 0; i < HUDELEMENTCOUNT; i++) {
         if (!elements[i].isHidden) {
             if (elements[i].texture.id != 0)
-                DrawTexturePro(elements[i].texture, (Rectangle){0,0,elements[i].texture.width,elements[i].texture.height}, (Rectangle) {elements[i].pos.x * xscale, elements[i].pos.y * yscale, elements[i].width * xscale, elements[i].height * yscale}, (Vector2){}, elements[i].rotation, WHITE);
+                DrawTexturePro(elements[i].texture, {0,0,(float)elements[i].texture.width,(float)elements[i].texture.height}, {elements[i].pos.x * xscale, elements[i].pos.y * yscale, elements[i].width * xscale, elements[i].height * yscale}, {}, elements[i].rotation, WHITE);
             else
-                DrawRectangleV((Vector2) {elements[i].pos.x * xscale, elements[i].pos.y * yscale}
-                ,(Vector2) {elements[i].width * xscale, elements[i].height * yscale}, DARKBLUE);
+                DrawRectangleV({elements[i].pos.x * xscale, elements[i].pos.y * yscale}
+                ,{elements[i].width * xscale, elements[i].height * yscale}, DARKBLUE);
             //SetWindowPosition((GetMonitorWidth(0) + 1000) * (GetTime() / 4 - floor(GetTime() / 4)) - 1000, 200 * sin(GetTime() * 4) + GetMonitorHeight(0) / 2 - 600 / 2);
         }
     }
@@ -139,12 +139,7 @@ void CheckClick(Vector2 mousePos) {
         if (elements[i].isActive && elements[i].onClickFunction != 0) {
             if (elements[i].rotation == 0) {
                 if (mousePos.x > elements[i].pos.x && mousePos.x < elements[i].pos.x + elements[i].width && mousePos.y > elements[i].pos.y && mousePos.y < elements[i].pos.y + elements[i].height) {
-                    if (elements[i].onClickParam1 != -1 && elements[i].onClickParam2 != -1)
-                        ((void (*)(int, int))elements[i].onClickFunction)(elements[i].onClickParam1, elements[i].onClickParam2);
-                    else if (elements[i].onClickParam1 != -1)
-                        ((void (*)(int))elements[i].onClickFunction)(elements[i].onClickParam1);
-                    else 
-                        ((void (*)(int))elements[i].onClickFunction)(i);
+                    elements[i].onClickFunction();
                 }
             }
         }
@@ -163,12 +158,12 @@ void CheckHover(Vector2 mousePos) {
                 if ( mousePos.x > elements[i].pos.x && mousePos.x < elements[i].pos.x + elements[i].width && mousePos.y > elements[i].pos.y && mousePos.y < elements[i].pos.y + elements[i].height)
                     intersects = true;
                 if (intersects && !elements[i].wasHovered) {
-                    elements[i].onHoverFunction(i);
+                    elements[i].onHoverFunction();
                     elements[i].wasHovered = true;
                 }
                 else if (!intersects && elements[i].wasHovered) {
                     elements[i].wasHovered = false;
-                    elements[i].unHoverFunction(i);
+                    elements[i].unHoverFunction();
                 }
             }
         }
