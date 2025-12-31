@@ -1,4 +1,4 @@
-
+#include <string>
 #include "../raylib/src/raylib.h"
 #include "../raylib/src/raymath.h"
 #include "../raylib/src/rlgl.h"
@@ -6,11 +6,14 @@
 #include "game.hpp"
 #include "hud.hpp"
 #include "entity.hpp"
+#include "background.hpp"
+#include "textures.hpp"
+#include <iostream>
 
 void DrawBackground();
 void DrawEnemies();
 
-Entity *player = new Entity(100, 10, 10, PATTACKDANCE, PATTACKSPAM);
+Entity *player = nullptr;
 
 
 #define ENEMYSHADERCOUNT 1
@@ -18,7 +21,7 @@ Shader enemyShaders[ENEMYSHADERCOUNT];
 
 #define BATTLEENEMIESLENGTH 5
 Entity *battleEnemies[BATTLEENEMIESLENGTH];
-void RemoveFromBattleEnemies(int index) {battleEnemies[index] = nullptr;}
+void RemoveFromBattleEnemies(int index) {battleEnemies[index] = nullptr;} //DOESNT DEALLOC MEMORY
 void RemoveAllFromBattleEnemies() {for(int i = 0; i < BATTLEENEMIESLENGTH; i++) battleEnemies[i] = nullptr;}
 int BattleEnemiesCount() { int count; while ( count < 5 && battleEnemies[count] != nullptr) count++; return count;}
 
@@ -64,10 +67,21 @@ void UpdateGame() {
     prevGameState = mainGameState;
 }
 
+
+void DrawFramerate(int size) {
+    int framerate = 1 / GetFrameTime();
+    std::string framerateText = std::to_string(framerate);
+    DrawText(framerateText.c_str(), 0, 0, size, GREEN);
+}
+
 void DrawGame() {
     DrawBackground();
+    //std::cout << "Drew background" << std::endl;
     DrawHud();
+    //std::cout << "Drew HUD" << std::endl;
     DrawEnemies();
+    //std::cout << "Drew enemies" << std::endl;
+    DrawFramerate(40);
     if (mainGameState == INBATTLESTATE) {
 
     }
@@ -76,6 +90,7 @@ void DrawGame() {
 }
 
 void DrawEnemies() {
+
     float xscale = GetScreenWidth() / HUDWIDTH;
     float yscale = GetScreenHeight() / HUDHEIGHT;
     float totalTime = GetTime();
@@ -83,7 +98,7 @@ void DrawEnemies() {
     int activeEnemies = BattleEnemiesCount();
 
     int xpadding = 200 * xscale;
-    int xSpacing = (GetScreenWidth() - xpadding * 2) / activeEnemies;
+    int xSpacing = (GetScreenWidth() - xpadding * 2) / (activeEnemies == 0 ? 1 : activeEnemies);
     float yPos = 0;
     float width = 1000 * xscale;
     float height = 800 * yscale;
@@ -99,7 +114,6 @@ void DrawEnemies() {
         SetShaderValue(enemyShaders[shaderIndex], GetShaderLocation(enemyShaders[shaderIndex], "timeSinceDamaged"), &timeSinceDamaged, SHADER_UNIFORM_FLOAT);
         BeginShaderMode(enemyShaders[shaderIndex]);
         }
-
         if (enemy.GetTexture().id != 0)
             DrawTexturePro(enemy.GetTexture(),{0,0,4160,3120} ,{xPos,yPos,xPos + width,xPos + height}, {0, 0}, 0.0f, BLACK);
         else 
@@ -110,43 +124,24 @@ void DrawEnemies() {
     }
 }
 
-#define bgShaderCount 2
-Shader bgShaders[bgShaderCount];
-int currentBGShaderIndex = 0;
 
-Texture2D testTex;
-Vector2 laggardMousePos;
+
+
 
 void InitializeGame() {
-    testTex = LoadTexture(TextFormat("%s%s", GetApplicationDirectory(), "../resources/textures/testrocks.png"));
     Texture2D texture = { rlGetTextureIdDefault(), 1, 1, 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
-
+    SetWindowTitle("Waow");
     SetShapesTexture(texture, {0.0f, 0.0f, 1.0f, 1.0f });
+    InitializeTextures(); //must be called first
     InitializeHud();
+    InitializeBackground();
+    SetTargetFPS(200);
 
+    player = new Entity(100, 10, 10, PATTACKDANCE, PATTACKSPAM);
     battleEnemies[0] = new Entity(100, 10, 10, EATTACKJAB, EATTACKSPIN);
 
-	for (int i = 0; i < bgShaderCount; i++)
-		bgShaders[i] = LoadShader(0, TextFormat("%s%s", GetApplicationDirectory(), TextFormat("../resources/shaders/background%i.fs", i)));
-    for (int i = 0; i < ENEMYSHADERCOUNT; i++)
+	for (int i = 0; i < ENEMYSHADERCOUNT; i++)
  		enemyShaders[i] = LoadShader(0, TextFormat("%s%s", GetApplicationDirectory(), TextFormat("../resources/shaders/enemy%i.fs", i)));
        
 }
 
-void DrawBackground() {
-	float windowHeight = GetScreenHeight();
-    float windowWidth = GetScreenWidth();
-	BeginShaderMode(bgShaders[currentBGShaderIndex]);
-	float totalTime = GetTime();
-	Vector2 mousePos = GetMousePosition();
-	mousePos.y = -mousePos.y + windowHeight;
-	SetShaderValue(bgShaders[currentBGShaderIndex], GetShaderLocation(bgShaders[currentBGShaderIndex], "totalTime"), &totalTime, SHADER_UNIFORM_FLOAT);
-    if (currentBGShaderIndex == 1) {
-	    SetShaderValue(bgShaders[currentBGShaderIndex], GetShaderLocation(bgShaders[currentBGShaderIndex], "mousePos"), &mousePos, SHADER_UNIFORM_VEC2);
-	    SetShaderValue(bgShaders[currentBGShaderIndex], GetShaderLocation(bgShaders[currentBGShaderIndex], "laggardMousePos"), &laggardMousePos, SHADER_UNIFORM_VEC2);
-    }
-	laggardMousePos.x += 3 * GetFrameTime() * (mousePos.x - laggardMousePos.x);
-	laggardMousePos.y += 3 * GetFrameTime() * (mousePos.y - laggardMousePos.y);
-	DrawTexturePro(testTex,{0,0,4160,3120} ,{0,0,windowWidth,windowHeight}, {0, 0}, 0.0f, BLACK);
-	EndShaderMode();
-}

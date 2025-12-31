@@ -64,7 +64,7 @@
     .height = 200,
     .width = 300,
     .rotation = 0,
-    .texture = LoadTexture(TextFormat("%s%s", GetApplicationDirectory(), "../resources/textures/testrocks.png")),
+    .texture = {0},
     .isActive = true,
     .isHidden = false,
     .onClickFunction = []() {UseAttackOnEnemy(0,1);}, //

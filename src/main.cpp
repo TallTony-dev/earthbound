@@ -1,6 +1,8 @@
 #include "../raylib/src/raylib.h"
 #include "../raylib/src/raymath.h"
 #include "game.hpp"
+#include "textures.hpp"
+#include <iostream>
 // #if defined(PLATFORM_DESKTOP)
     #define GLSL_VERSION            330
 // #else   // PLATFORM_ANDROID, PLATFORM_WEB
@@ -24,24 +26,23 @@ void Initialize() {
 }
 
 void CloseProgram() {
+	UnloadTextures();
    	CloseWindow();
 }
 
 
 int main()
 {
+	std::cout << "Running main" << std::endl;
 	Initialize();
 
 	while (!WindowShouldClose()) {
 		Update();
-
+		//std::cout << "Updated" << std::endl;
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
-		// if (IsWindowResized())
-		// 	InitWindow()
-
 		DrawGame();
-
+		//std::cout << "Drew" << std::endl;
 		EndDrawing();
 	}	
 	CloseProgram();

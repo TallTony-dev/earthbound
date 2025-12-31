@@ -25,6 +25,32 @@ uniform sampler2D texture0;
 out vec4 finalColor;
 
 
+//sobel adapted from raylib examples
+vec3 Sobel(vec2 uv) {
+    float x = 1.0/416;
+    float y = 1.0/312;
+
+    vec4 horizEdge = vec4(0.0);
+    horizEdge -= texture(texture0, vec2(uv.x - x, uv.y - y))*1.0;
+    horizEdge -= texture(texture0, vec2(uv.x - x, uv.y   ))*2.0;
+    horizEdge -= texture(texture0, vec2(uv.x - x, uv.y + y))*1.0;
+    horizEdge += texture(texture0, vec2(uv.x + x, uv.y - y))*1.0;
+    horizEdge += texture(texture0, vec2(uv.x + x, uv.y   ))*2.0;
+    horizEdge += texture(texture0, vec2(uv.x + x, uv.y + y))*1.0;
+
+    vec4 vertEdge = vec4(0.0);
+    vertEdge -= texture(texture0, vec2(uv.x - x, uv.y - y))*1.0;
+    vertEdge -= texture(texture0, vec2(uv.x    , uv.y - y))*2.0;
+    vertEdge -= texture(texture0, vec2(uv.x + x, uv.y - y))*1.0;
+    vertEdge += texture(texture0, vec2(uv.x - x, uv.y + y))*1.0;
+    vertEdge += texture(texture0, vec2(uv.x    , uv.y + y))*2.0;
+    vertEdge += texture(texture0, vec2(uv.x + x, uv.y + y))*1.0;
+
+    vec3 edge = sqrt((horizEdge.rgb*horizEdge.rgb) + (vertEdge.rgb*vertEdge.rgb));
+    return edge;
+
+    //finalColor = vec4(edge, texture(texture0, fragTexCoord).a);
+}
 
 
 void main() {
@@ -53,5 +79,6 @@ void main() {
     uv.x -= (1 - fragTexCoord.y) * (-fragTexCoord.x + 0.5) * (sin(totalTime * 0.2) * 0.5 + 0.5); //convergence
 
     uv.x += 0.4 * sin(fragTexCoord.y + totalTime * 0.2) + sin(totalTime * 0.05);
-    finalColor.rgb -= texture(texture0, uv).rgb * 0.8;
+    float edge = Sobel(uv).r;
+    finalColor.rgb -= edge * 4;
 }

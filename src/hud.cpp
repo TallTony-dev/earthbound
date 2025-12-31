@@ -1,6 +1,7 @@
 #include "hud.hpp"
 #include "game.hpp"
 #include "../raylib/src/raymath.h"
+#include "textures.hpp"
 
 HudElement elements[HUDELEMENTCOUNT];
 
@@ -64,6 +65,7 @@ void InitializeHud() {
         elements[i] = elements_[i];
         elements[i].elementIndex = i;
     }
+    elements[HUD_BATTACK1BTN].texture = GetTexture("rocks");
 }
 
 void UpdateHud() {

@@ -29,7 +29,6 @@ void UpdateGame();
 void DrawGame();
 void InitializeGame();
 
-
 int BattleEnemiesCount(); //gets number of active battle enemies
 void UseAttackOnEnemy(int enemyIndex, int attackNum);
 
