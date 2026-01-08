@@ -4,7 +4,7 @@
 #include "../raylib/src/rlgl.h"
 #include <stdarg.h>
 #include "game.hpp"
-#include "hud.hpp"
+#include "hudstuff/hud.hpp"
 #include "entity.hpp"
 #include "background.hpp"
 #include "textures.hpp"
@@ -34,10 +34,8 @@ void SetGameState(int state) {mainGameState = state;}
 int prevGameState = -1;
 
 void UpdateGame() {
-    if (IsMouseButtonPressed(0))
-        CheckClick(GetMousePosition());
-    else
-        CheckHover(GetMousePosition());
+    UpdateHud();
+    
     
     bool isFirst = false;
     if (prevGameState != mainGameState) {
@@ -54,9 +52,9 @@ void UpdateGame() {
             //HideElement(HUD_STARTBTN);
         }
         if (mainGameState == INBATTLESTATE) {
-            EnterBattleState();
+            //EnterBattleState();
         } else if (prevGameState == INBATTLESTATE) {
-            ExitBattleState();
+            //ExitBattleState();
         }
     }
     else {
@@ -115,7 +113,7 @@ void DrawEnemies() {
         BeginShaderMode(enemyShaders[shaderIndex]);
         }
         if (enemy.GetTexture().id != 0)
-            DrawTexturePro(enemy.GetTexture(),{0,0,4160,3120} ,{xPos,yPos,xPos + width,xPos + height}, {0, 0}, 0.0f, BLACK);
+            DrawTexturePro(enemy.GetTexture(),{0,0,4160,3120} ,{xPos,yPos,xPos + width,yPos + height}, {0, 0}, 0.0f, BLACK);
         else 
             DrawRectangleV({xPos, yPos}, {width, height}, BLACK);
 
