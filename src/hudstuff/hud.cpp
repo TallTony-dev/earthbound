@@ -24,17 +24,28 @@ void InitializeHud() {
     menus[BATTLEMENU]->Activate();
 }
 
+Vector2 ConvertToHudPos(Vector2 pos) {
+    float xscale = GetScreenWidth() / HUDWIDTH;
+    float yscale = GetScreenHeight() / HUDHEIGHT;
+    pos.x *= xscale;
+    pos.y *= yscale;
+    return pos;
+}
+
+void UpdateHudScale() {
+    //scale hud elements and positions here, maybe add aspect ratio member
+    /hcghfcycuvu
+}
+
 void UpdateHud() {
-    Vector2 mousePos = GetMousePosition();
-    float xscale = HUDWIDTH / GetScreenWidth();
-    float yscale = HUDHEIGHT / GetScreenHeight();
-    mousePos.x *= xscale;
-    mousePos.y *= yscale;
     for (int i = 0; i < MENUCOUNT; i++) {
         Menu *menu = menus[i];
         if (menu->IsActive()) {
-           menu->Update(mousePos);
+           menu->Update(ConvertToHudPos(GetMousePosition()));
         }
+    }
+    if (IsWindowResized()) {
+        UpdateHudScale();
     }
     UpdateHudAnims();
 

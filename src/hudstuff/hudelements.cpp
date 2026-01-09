@@ -30,7 +30,23 @@ void HudElement::Draw() {
 }
 void HudElement::Update(Vector2 hudMousePos) {}
 
+
+
+                #include <iostream>
+                float tim;
 bool HudElement::Intersects(Vector2 pos) {
+    tim += GetFrameTime();
+    if (tim > 1) {
+    std::cout << "mousex: " << pos.x << std::endl;
+    std::cout << "mousey: " << pos.y << std::endl;
+    std::cout << "x: " << pos_.x << std::endl;
+    std::cout << "y: " << pos_.y << std::endl;
+    std::cout << "botx: " << pos_.x + width_ << std::endl;
+    std::cout << "boty: " << pos_.y + height_ << std::endl;
+    std::cout << "realmousex: " << GetMouseX() << std::endl;
+    std::cout << "realmousey: " << GetMouseY() << std::endl;
+    tim = 0;
+    }
     if (pos.x > pos_.x && pos.x < pos_.x + width_ && pos.y > pos_.y && pos.y < pos_.y + height_)
         return true;
     else
