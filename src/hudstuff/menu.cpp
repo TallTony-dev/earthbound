@@ -17,11 +17,6 @@ bool Menu::IsActive() {
 
 
 void Menu::Update(Vector2 mousePos) {
-    float xscale = HUDWIDTH / GetScreenWidth();
-    float yscale = HUDHEIGHT / GetScreenHeight();
-    mousePos.x *= xscale;
-    mousePos.y *= yscale;
-
     for (int i = 0; i < elements.size(); i++) {
         elements[i]->Update(mousePos);
     }

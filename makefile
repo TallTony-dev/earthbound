@@ -18,8 +18,8 @@ build_windows: $(OBJECTS)
 	$(COMPILER) $(OBJECTS) $(WINDOWS_OUT) $(WINDOWS_OPT)
 
 
-%.o: %.cpp
+objs/%.o: %.cpp
 	$(COMPILER) -c $< -o $@
 
 clean:
-	rm -f *.o myprogram
+	rm -rf src/*.o src/**/*.o 

@@ -2,3 +2,4 @@ bin
 .vscode
 *.o
 objs
+.DS_STORE

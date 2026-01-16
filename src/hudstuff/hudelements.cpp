@@ -1,11 +1,12 @@
 #include "hudelements.hpp"
 #include "hudanimmanager.hpp"
+#include "hud.hpp"
 #include <iostream>
 
 HudElement::HudElement(Vector2 pos, float height, float width, float rot) {
-    pos_ = pos;
-    height_ = height;
-    width_ = width;
+    pos_ = ConvertToScreenPos(pos);
+    height_ = height * hudScale;
+    width_ = width * hudScale;
     rotation_ = rot;
     scale_ = 1;
 }
