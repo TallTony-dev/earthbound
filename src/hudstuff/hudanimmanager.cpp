@@ -9,7 +9,6 @@ void AddHudAnimation(HudAnimation anim) {
 }
 
 
-
 void UpdateHudAnims() {
     float deltaTime = GetFrameTime();
     for(auto i = activeanims.begin(); i != activeanims.end(); i++) {

@@ -1,7 +1,7 @@
 makefile:
 COMPILER = clang++
 
-CFILES := $(wildcard src/*.cpp src/hudstuff/*.cpp)
+CFILES := $(wildcard src/*.cpp src/**/*.cpp)
 OBJECTS := $(CFILES:.cpp=.o)
 
 MACOS_OPT = -std=c++23 -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL raylib/src/libraylib.a

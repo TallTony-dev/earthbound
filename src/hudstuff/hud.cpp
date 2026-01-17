@@ -41,14 +41,15 @@ Vector2 ConvertToScreenPos(Vector2 hudPos) {
 void UpdateHudScale() {
     //scale hud elements and positions here
     //use old scale to find new positions and scales
-    //hcghfcycuvu
+    //TODO: implement this pls ty
+
 }
 
 void UpdateHud() {
     for (int i = 0; i < MENUCOUNT; i++) {
         Menu *menu = menus[i];
         if (menu->IsActive()) {
-           menu->Update(GetMousePosition());
+           menu->Update(GetMousePosition()); //may have to convert mousepos to hudpos when scaling is implemented properly
         }
     }
     if (IsWindowResized()) {

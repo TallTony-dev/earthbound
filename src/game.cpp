@@ -8,6 +8,7 @@
 #include "entity.hpp"
 #include "background.hpp"
 #include "textures.hpp"
+#include "fluidsim/fluidsimmanager.hpp"
 #include <iostream>
 
 void DrawBackground();
@@ -35,7 +36,7 @@ int prevGameState = -1;
 
 void UpdateGame() {
     UpdateHud();
-    
+    UpdateFluidSims();
     
     bool isFirst = false;
     if (prevGameState != mainGameState) {
@@ -73,11 +74,12 @@ void DrawFramerate(int size) {
 }
 
 void DrawGame() {
-    DrawBackground();
+    //DrawBackground();
     //std::cout << "Drew background" << std::endl;
-    DrawHud();
+    //DrawHud();
+    DrawFluidSims();
     //std::cout << "Drew HUD" << std::endl;
-    DrawEnemies();
+    //DrawEnemies();
     //std::cout << "Drew enemies" << std::endl;
     DrawFramerate(40);
     if (mainGameState == INBATTLESTATE) {
@@ -133,7 +135,9 @@ void InitializeGame() {
     InitializeTextures(); //must be called first
     InitializeHud();
     InitializeBackground();
+    InitializeFluidSims();
     SetTargetFPS(200);
+
 
     player = new Entity(100, 10, 10, PATTACKDANCE, PATTACKSPAM);
     battleEnemies[0] = new Entity(100, 10, 10, EATTACKJAB, EATTACKSPIN);
