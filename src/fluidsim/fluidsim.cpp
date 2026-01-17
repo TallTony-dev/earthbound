@@ -175,9 +175,9 @@ FluidSim::FluidSim(FluidSimType type) {
     transferBuffer = {0};
 
     // Load shaders
-    fluidSimTransferShader = LoadShader(0, "../resources/fluidshaders/fluidsimtransfer.glsl");
-    fluidSimLogicShader = LoadShader(0, "../resources/fluidshaders/fluidsimlogic.glsl");
-    fluidSimRenderShader = LoadShader(0, "../resources/fluidshaders/fluidsimrenderer1.glsl");
+    fluidSimTransferShader = LoadShader(0, TextFormat("%s%s", GetApplicationDirectory(), "../resources/fluidshaders/fluidsimtransfer.glsl"));
+    fluidSimLogicShader = LoadShader(0, TextFormat("%s%s", GetApplicationDirectory(), "../resources/fluidshaders/fluidsimlogic.glsl"));
+    fluidSimRenderShader = LoadShader(0, TextFormat("%s%s", GetApplicationDirectory(), "../resources/fluidshaders/fluidsimrenderer1.glsl"));
     
     transferCountUniformLoc = GetShaderLocation(fluidSimTransferShader, "commandCount");
     transferOutputPartLoc = GetShaderLocation(fluidSimTransferShader, "outputPart");
