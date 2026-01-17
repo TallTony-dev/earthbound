@@ -15,10 +15,10 @@ typedef struct FluidSimUpdateCmd {
     float b;
 } FluidSimUpdateCmd;
 
-#define MAXFLUIDSIMTRANSFERS 6
+#define MAXFLUIDSIMTRANSFERS 6 //match glsl
 typedef struct FluidSimUpdateSSBO {
     unsigned int count;
-    FluidSimUpdateCmd commands[MAXFLUIDSIMTRANSFERS];
+    FluidSimUpdateCmd commands[MAXFLUIDSIMTRANSFERS * 3]; //12 floats per thing, last 3 unused
 } FluidSimUpdateSSBO;
 
 //MUST MATCH GLSL
@@ -40,14 +40,20 @@ class FluidSim {
         void DrawSim();
     private:
         FluidSimType type_;
-        float remainingTime_;
-        unsigned int fluidSimLogicProgram;
-        unsigned int fluidSimTransferProgram;
+        Shader fluidSimTransferShader;
         Shader fluidSimRenderShader;
-        unsigned int ssboA;
-        unsigned int ssboB;
-        unsigned int ssboTransfer;
+        Shader fluidSimLogicShader;
+        // unsigned int ssboA;
+        // uns
+        RenderTexture2D stateA_part1;
+        RenderTexture2D stateA_part2;
+        RenderTexture2D stateB_part1;
+        RenderTexture2D stateB_part2;
+        bool useStateA; 
+
+        int transferOutputPartLoc;
+        int logicOutputPartLoc;
         int resUniformLoc;
-        Vector2 resolution;
+        int transferCountUniformLoc;
         FluidSimUpdateSSBO transferBuffer;
 };

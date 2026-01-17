@@ -1,34 +1,22 @@
-#version 430
+#version 330 core
 
 #define SIMWIDTH 1200
 #define SIMHEIGHT 800
 
+// Input from vertex shader
+in vec2 fragTexCoord;
 
-//MUST MATCH fluidsim.hpp
-struct FluidTile {
-    float pressure;
-    float velocityY;
-    float velocityX;
-    float r;
-    float g;
-    float b;
-};
+out vec4 fragColor;
 
-layout(std430, binding = 1) readonly restrict buffer SimBufferLayout {
-    FluidTile tileBuffer[]; // tileBuffer[x, y] = tileBuffer[x + SIMWIDTH * y]
-};
-
-layout(std430, binding = 3) writeonly restrict buffer SimBufferLayout {
-    FluidTile tileBufferDest[]; // tileBuffer[x, y] = tileBuffer[x + SIMWIDTH * y]
-};
-
-#define getTileBuffer(x, y) (tileBuffer[((x) + SIMWIDTH * (y))])
-#define getTileBufferDest(x, y) (tileBufferDest[((x) + SIMWIDTH * (y))])
-
+uniform sampler2D texture0;        // Part1 - bound by DrawTexturePro
+uniform sampler2D tileBufferPart2; // Part2 - manually bound
+uniform int outputPart; // 0 -> part1, 1 -> part2
 
 void main() {
-    uint x = gl_GlobalInvocationID.x;
-    uint y = gl_GlobalInvocationID.y;
+    vec2 uv = fragTexCoord;
+    vec4 part1 = texture(texture0, uv);
+    vec4 part2 = texture(tileBufferPart2, uv);
 
-    getTileBufferDest(x,y) = getTileBuffer(x,y);
+    if (outputPart == 0) fragColor = part1;
+    else fragColor = part2;
 }

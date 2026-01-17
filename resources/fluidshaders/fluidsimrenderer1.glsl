@@ -1,36 +1,30 @@
-#version 430
+#version 330 core
 
-#define SIMWIDTH 1200 //MUST MATCH fluidsim.cpp
-#define SIMHEIGHT 800 //MUST MATCH fluidsim.cpp
-
-in vec2 fragTexCoord;
-in vec4 fragColor;
-in vec3 fragNormal;
+#define SIMWIDTH 1200
+#define SIMHEIGHT 800
 
 uniform vec2 resolution;
+uniform sampler2D texture0;        // Part1 - bound by DrawTexturePro
+uniform sampler2D tileBufferPart2; // Part2 - manually bound
 
+in vec2 fragTexCoord; //also recall gl_fragcoord
 out vec4 finalColor;
 
-struct FluidTile {
-    float pressure;
-    float velocityY;
-    float velocityX;
-    float r;
-    float g;
-    float b;
-};
-
-layout(std430, binding = 1) buffer SimBufferLayout {
-    FluidTile tileBuffer[]; // tileBuffer[x, y] = tileBuffer[x + SIMWIDTH * y]
-};
-#define getTileBuffer(x, y) (tileBuffer[((x) + SIMWIDTH * (y))])
-
-
 void main() {
-    ivec2 uv = ivec2(int((float(SIMWIDTH) / resolution.x) * fragTexCoord.x),
-                    int((float(SIMHEIGHT) / resolution.y) * fragTexCoord.y));
-    uv = clamp(uv, ivec2(0), ivec2(SIMWIDTH - 1, SIMHEIGHT - 1));
-
-    FluidTile tile = getTileBuffer(uv.x, uv.y);
-    finalColor = vec4(tile.r, tile.g, tile.b, 1.0);
+    // Use the texture coordinates from vertex shader
+    vec2 texCoord = fragTexCoord;
+    
+    vec4 part1 = texture(texture0, texCoord);
+    vec4 part2 = texture(tileBufferPart2, texCoord);
+    
+    float r = part1.w;
+    float g = part2.x;
+    float b = part2.y;
+    
+    // Show dark blue background when no fluid data (helps with debugging)
+    if (r < 0.001 && g < 0.001 && b < 0.001) {
+        finalColor = vec4(0.05, 0.05, 0.15, 1.0);
+    } else {
+        finalColor = vec4(r, g, b, 1.0);
+    }
 }
