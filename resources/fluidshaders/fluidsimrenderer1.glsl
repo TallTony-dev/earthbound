@@ -1,11 +1,7 @@
 #version 330 core
 
-#define SIMWIDTH 1200 //MUST MATCH fluidsim.cpp
-#define SIMHEIGHT 800 //MUST MATCH fluidsim.cpp
-
-in vec2 fragTexCoord;
-in vec4 fragColor;
-in vec3 fragNormal;
+#define SIMWIDTH 1200
+#define SIMHEIGHT 800
 
 out vec4 finalColor;
 
