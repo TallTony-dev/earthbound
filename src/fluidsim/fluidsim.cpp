@@ -105,5 +105,5 @@ FluidSim::FluidSim(FluidSimType type) {
     EndTextureMode();
     
     transferBuffer = {0};
-    
+    //test
 }
