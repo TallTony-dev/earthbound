@@ -10,27 +10,14 @@ typedef struct FluidSimUpdateCmd {
     int xVector; //delta value to indicate velocity change
     int yVector;
     float pressure;
-    float r; //between 0 and 1 likely good
-    float g;
-    float b;
+    float viscosity;
 } FluidSimUpdateCmd;
 
 #define MAXFLUIDSIMTRANSFERS 6
-typedef struct FluidSimUpdateSSBO {
+typedef struct FluidSimUpdateBuf {
     unsigned int count;
     FluidSimUpdateCmd commands[MAXFLUIDSIMTRANSFERS];
-} FluidSimUpdateSSBO;
-
-//MUST MATCH GLSL
-typedef struct FluidTile {
-    float pressure;
-    float velocityY;
-    float velocityX;
-    float r;
-    float g;
-    float b;
-} FluidTile;
-
+} FluidSimUpdateBuf;
 
 
 class FluidSim {
@@ -41,13 +28,13 @@ class FluidSim {
     private:
         FluidSimType type_;
         float remainingTime_;
-        unsigned int fluidSimLogicProgram;
-        unsigned int fluidSimTransferProgram;
+        Shader fluidSimLogicShader;
+        Shader fluidSimTransferShader;
         Shader fluidSimRenderShader;
-        unsigned int ssboA;
-        unsigned int ssboB;
-        unsigned int ssboTransfer;
-        int resUniformLoc;
-        Vector2 resolution;
-        FluidSimUpdateSSBO transferBuffer;
+        FluidSimUpdateBuf transferBuffer;
+        RenderTexture renderTexture1;
+        RenderTexture renderTexture2;
+        int transferShaderCommandLoc;
+        int transferShaderCountLoc;
+        int rendererShaderResLoc;
 };

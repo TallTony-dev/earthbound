@@ -1,34 +1,25 @@
-#version 430
+#version 330 core
 
 #define SIMWIDTH 1200
 #define SIMHEIGHT 800
 
+// struct FluidTile {
+//     float pressure;
+//     float viscosity;
+//     float velocityX;
+//     float velocityY;
+// };
 
-//MUST MATCH fluidsim.hpp
-struct FluidTile {
-    float pressure;
-    float velocityY;
-    float velocityX;
-    float r;
-    float g;
-    float b;
-};
+in vec2 fragTexCoord;
 
-layout(std430, binding = 1) readonly restrict buffer SimBufferLayout {
-    FluidTile tileBuffer[]; // tileBuffer[x, y] = tileBuffer[x + SIMWIDTH * y]
-};
+uniform sampler2D texture0;
 
-layout(std430, binding = 3) writeonly restrict buffer SimBufferLayout {
-    FluidTile tileBufferDest[]; // tileBuffer[x, y] = tileBuffer[x + SIMWIDTH * y]
-};
-
-#define getTileBuffer(x, y) (tileBuffer[((x) + SIMWIDTH * (y))])
-#define getTileBufferDest(x, y) (tileBufferDest[((x) + SIMWIDTH * (y))])
-
+out vec4 finalTileState;
 
 void main() {
-    uint x = gl_GlobalInvocationID.x;
-    uint y = gl_GlobalInvocationID.y;
+    vec2 tileCoord = fragTexCoord * vec2(SIMWIDTH, SIMHEIGHT);
+    vec4 tileState = texture(texture0, fragTexCoord);
 
-    getTileBufferDest(x,y) = getTileBuffer(x,y);
+    finalTileState = tileState;
+
 }
