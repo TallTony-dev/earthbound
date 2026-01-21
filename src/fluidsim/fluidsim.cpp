@@ -6,7 +6,7 @@
 #include <iostream>
 
 #define SIMWIDTH 1200 //MUST BE THE SAME AS IN both GLSLs and / 16
-#define SIMHEIGHT 800 //MUST BE THE SAME AS IN both GLSLs and / 16
+#define SIMHEIGHT 1200 //MUST BE THE SAME AS IN both GLSLs and / 16
 
 //Fluid sim development largely supported by raylib's 'game of life' example
 //which shows how to use compute shaders in the context of raylib.
@@ -21,11 +21,11 @@ void FluidSim::UpdateSim() {
                 transferBuffer.commands[transferBuffer.count].xVector = delta.x;
                 transferBuffer.commands[transferBuffer.count].yVector = delta.y;
 
-                transferBuffer.commands[transferBuffer.count].w = 10;
+                transferBuffer.commands[transferBuffer.count].w = 20;
 
                 transferBuffer.commands[transferBuffer.count].viscosity = 1.0f;
 
-                transferBuffer.commands[transferBuffer.count].pressure = 0.2f;
+                //transferBuffer.commands[transferBuffer.count].pressure = 0.2f;
                 transferBuffer.count++;
             }
         }
@@ -67,7 +67,7 @@ void FluidSim::UpdateSim() {
     EndShaderMode();
     EndTextureMode();
     //now renderTexture1 has the correct state after logic is applied
-    
+    std::swap(renderTexture1, renderTexture2);
 }
 
 void FluidSim::DrawSim() {
@@ -98,10 +98,10 @@ FluidSim::FluidSim(FluidSimType type) {
     
     // Clear render textures to black
     BeginTextureMode(renderTexture1);
-    ClearBackground({0,0,0,0});
+    ClearBackground({101,(unsigned char)GetRandomValue(0,255),0,0});
     EndTextureMode();
     BeginTextureMode(renderTexture2);
-    ClearBackground({0,0,0,0});
+    ClearBackground({101,(unsigned char)GetRandomValue(0,255),0,0});
     EndTextureMode();
     
     transferBuffer = {0};
