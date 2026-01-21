@@ -21,11 +21,11 @@ void FluidSim::UpdateSim() {
                 transferBuffer.commands[transferBuffer.count].xVector = delta.x;
                 transferBuffer.commands[transferBuffer.count].yVector = delta.y;
 
-                transferBuffer.commands[transferBuffer.count].w = 20;
+                transferBuffer.commands[transferBuffer.count].w = 10;
 
-                transferBuffer.commands[transferBuffer.count].viscosity = 1.0f;
+                transferBuffer.commands[transferBuffer.count].viscosity = sinf(GetTime()) * 2 + 1;
 
-                //transferBuffer.commands[transferBuffer.count].pressure = 0.2f;
+                transferBuffer.commands[transferBuffer.count].pressure = 0.2f;
                 transferBuffer.count++;
             }
         }
@@ -48,11 +48,13 @@ void FluidSim::UpdateSim() {
 
         //run transfer shader
         BeginTextureMode(renderTexture2);
+        rlDisableColorBlend();
         BeginShaderMode(fluidSimTransferShader);
         SetShaderValue(fluidSimTransferShader, transferShaderCountLoc, &transferBuffer.count, SHADER_UNIFORM_INT);
         SetShaderValueV(fluidSimTransferShader, transferShaderCommandLoc, commands, SHADER_UNIFORM_FLOAT, MAXFLUIDSIMTRANSFERS * 7); //set command uniform
         DrawTexturePro(renderTexture1.texture, Rectangle{0,0,SIMWIDTH,SIMHEIGHT}, Rectangle{0,0,SIMWIDTH,SIMHEIGHT}, {0,0}, 0, PINK);
         EndShaderMode();
+        rlEnableColorBlend();
         EndTextureMode();
         //now commands have been drawn to renderTexture2 using renderTexture1 as the previous state
 
@@ -62,9 +64,11 @@ void FluidSim::UpdateSim() {
 
     //step simulation here
     BeginTextureMode(renderTexture1);
+    rlDisableColorBlend();
     BeginShaderMode(fluidSimLogicShader);
     DrawTexturePro(renderTexture2.texture, Rectangle{0,0,SIMWIDTH,SIMHEIGHT}, Rectangle{0,0,SIMWIDTH,SIMHEIGHT}, {0,0}, 0, GREEN);
     EndShaderMode();
+    rlEnableColorBlend();
     EndTextureMode();
     //now renderTexture1 has the correct state after logic is applied
     std::swap(renderTexture1, renderTexture2);
@@ -98,10 +102,10 @@ FluidSim::FluidSim(FluidSimType type) {
     
     // Clear render textures to black
     BeginTextureMode(renderTexture1);
-    ClearBackground({101,(unsigned char)GetRandomValue(0,255),0,0});
+    ClearBackground({0, 0, 127, 127});  // x=0 pressure, y=0, z=0.5 vel, w=0.5 vel
     EndTextureMode();
     BeginTextureMode(renderTexture2);
-    ClearBackground({101,(unsigned char)GetRandomValue(0,255),0,0});
+    ClearBackground({0, 0, 127, 127});
     EndTextureMode();
     
     transferBuffer = {0};

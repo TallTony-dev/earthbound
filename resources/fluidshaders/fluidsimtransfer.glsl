@@ -41,11 +41,12 @@ void main() {
         if (abs(tileCoord.x - x) <= float(radius) && abs(tileCoord.y - y) <= float(radius)) { //if this tile is in the radius
             finalSimState.x += pressure;
 
-            float velx = (finalSimState.z - 0.5) + float(xVector) * VECTORSTRENGTHMULT;
-            float vely = (finalSimState.w - 0.5) + float(yVector) * VECTORSTRENGTHMULT;
-
-            finalSimState.z = velx + 0.5;
-            finalSimState.w = vely + 0.5;
+            float velx = (finalSimState.z - 0.5) * 2 + float(xVector) * VECTORSTRENGTHMULT;
+            float vely = (finalSimState.w - 0.5) * 2 + float(yVector) * VECTORSTRENGTHMULT;
+            velx = clamp(velx, -1.0, 1.0);
+            vely = clamp(vely, -1.0, 1.0);
+            finalSimState.z = velx * 0.5 + 0.50001;
+            finalSimState.w = vely * 0.5 + 0.50001;
 
 
             float partialPressure = (pressure + finalSimState.x) / max(finalSimState.x, 0.0001);
