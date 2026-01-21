@@ -74,7 +74,7 @@ void DrawFramerate(int size) {
 }
 
 void DrawGame() {
-    //DrawBackground();
+    DrawBackground();
     //std::cout << "Drew background" << std::endl;
     //DrawHud();
     DrawFluidSims();

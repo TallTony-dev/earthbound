@@ -1,7 +1,7 @@
 #version 330 core
 
-#define SIMWIDTH 1200 //MUST MATCH fluidsim.cpp
-#define SIMHEIGHT 1200 //MUST MATCH fluidsim.cpp
+#define SIMWIDTH 2000 //MUST MATCH fluidsim.cpp
+#define SIMHEIGHT 2000 //MUST MATCH fluidsim.cpp
 #define MAXFLUIDSIMTRANSFERS 6
 
 // struct FluidTile {
@@ -38,7 +38,7 @@ void main() {
         float pressure = /*commands[i * 7 + 5]*/0;
         float viscosity = commands[i * 7 + 6];
 
-        if (abs(tileCoord.x - x) <= float(radius) && abs(tileCoord.y - y) <= float(radius)) { //if this tile is in the radius
+        if (distance(tileCoord, vec2(x,y)) <= radius) { //if this tile is in the radius
             finalSimState.x += pressure;
 
             float velx = (finalSimState.z - 0.5) * 2 + float(xVector) * VECTORSTRENGTHMULT;

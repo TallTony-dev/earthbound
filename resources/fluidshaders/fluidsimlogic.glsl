@@ -1,7 +1,7 @@
 #version 330 core
 
-#define SIMWIDTH 1200
-#define SIMHEIGHT 1200
+#define SIMWIDTH 2000
+#define SIMHEIGHT 2000
 
 // struct FluidTile {
 //     float pressure;
@@ -16,9 +16,9 @@ uniform sampler2D texture0;
 
 out vec4 finalTileState;
 
-#define PRESSUREMULT (0.1f)
+#define PRESSUREMULT (0.5f)
 #define VELOCITYMULT (1.0f)
-#define VISCOSITY (0.0001f)
+#define VISCOSITY (0.001f)
 
 #define xVel(tile) ((tile.z - 0.5) * 2.0)
 #define yVel(tile) ((tile.w - 0.5) * 2.0)

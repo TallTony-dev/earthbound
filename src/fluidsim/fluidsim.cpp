@@ -5,8 +5,8 @@
 #include <algorithm>
 #include <iostream>
 
-#define SIMWIDTH 1200 //MUST BE THE SAME AS IN both GLSLs and / 16
-#define SIMHEIGHT 1200 //MUST BE THE SAME AS IN both GLSLs and / 16
+#define SIMWIDTH 2000 //MUST BE THE SAME AS IN both GLSLs and / 16
+#define SIMHEIGHT 2000 //MUST BE THE SAME AS IN both GLSLs and / 16
 
 //Fluid sim development largely supported by raylib's 'game of life' example
 //which shows how to use compute shaders in the context of raylib.
@@ -21,7 +21,7 @@ void FluidSim::UpdateSim() {
                 transferBuffer.commands[transferBuffer.count].xVector = delta.x;
                 transferBuffer.commands[transferBuffer.count].yVector = delta.y;
 
-                transferBuffer.commands[transferBuffer.count].w = 10;
+                transferBuffer.commands[transferBuffer.count].w = 30;
 
                 transferBuffer.commands[transferBuffer.count].viscosity = sinf(GetTime()) * 2 + 1;
 
@@ -33,33 +33,31 @@ void FluidSim::UpdateSim() {
 
 
     //run commands from buffer
-    if (transferBuffer.count > 0) {
-        float commands[MAXFLUIDSIMTRANSFERS * 7]; //to go to the shader
-        for (int i = 0; i < transferBuffer.count; i++) {
-            commands[i * 7 + 0] = transferBuffer.commands[i].x;
-            commands[i * 7 + 1] = transferBuffer.commands[i].y;
-            commands[i * 7 + 2] = transferBuffer.commands[i].w;
-            commands[i * 7 + 3] = transferBuffer.commands[i].xVector;
-            commands[i * 7 + 4] = transferBuffer.commands[i].yVector;
-            commands[i * 7 + 5] = transferBuffer.commands[i].pressure;
-            commands[i * 7 + 6] = transferBuffer.commands[i].viscosity;
-        }
-        
-
-        //run transfer shader
-        BeginTextureMode(renderTexture2);
-        rlDisableColorBlend();
-        BeginShaderMode(fluidSimTransferShader);
-        SetShaderValue(fluidSimTransferShader, transferShaderCountLoc, &transferBuffer.count, SHADER_UNIFORM_INT);
-        SetShaderValueV(fluidSimTransferShader, transferShaderCommandLoc, commands, SHADER_UNIFORM_FLOAT, MAXFLUIDSIMTRANSFERS * 7); //set command uniform
-        DrawTexturePro(renderTexture1.texture, Rectangle{0,0,SIMWIDTH,SIMHEIGHT}, Rectangle{0,0,SIMWIDTH,SIMHEIGHT}, {0,0}, 0, PINK);
-        EndShaderMode();
-        rlEnableColorBlend();
-        EndTextureMode();
-        //now commands have been drawn to renderTexture2 using renderTexture1 as the previous state
-
-        transferBuffer.count = 0;
+    float commands[MAXFLUIDSIMTRANSFERS * 7]; //to go to the shader
+    for (int i = 0; i < transferBuffer.count; i++) {
+        commands[i * 7 + 0] = transferBuffer.commands[i].x;
+        commands[i * 7 + 1] = transferBuffer.commands[i].y;
+        commands[i * 7 + 2] = transferBuffer.commands[i].w;
+        commands[i * 7 + 3] = transferBuffer.commands[i].xVector;
+        commands[i * 7 + 4] = transferBuffer.commands[i].yVector;
+        commands[i * 7 + 5] = transferBuffer.commands[i].pressure;
+        commands[i * 7 + 6] = transferBuffer.commands[i].viscosity;
     }
+    
+
+    //run transfer shader
+    BeginTextureMode(renderTexture2);
+    rlDisableColorBlend();
+    BeginShaderMode(fluidSimTransferShader);
+    SetShaderValue(fluidSimTransferShader, transferShaderCountLoc, &transferBuffer.count, SHADER_UNIFORM_INT);
+    SetShaderValueV(fluidSimTransferShader, transferShaderCommandLoc, commands, SHADER_UNIFORM_FLOAT, MAXFLUIDSIMTRANSFERS * 7); //set command uniform
+    DrawTexturePro(renderTexture1.texture, Rectangle{0,0,SIMWIDTH,SIMHEIGHT}, Rectangle{0,0,SIMWIDTH,SIMHEIGHT}, {0,0}, 0, PINK);
+    EndShaderMode();
+    rlEnableColorBlend();
+    EndTextureMode();
+    //now commands have been drawn to renderTexture2 using renderTexture1 as the previous state
+
+    transferBuffer.count = 0;
 
 
     //step simulation here
