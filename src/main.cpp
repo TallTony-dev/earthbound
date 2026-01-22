@@ -3,20 +3,21 @@
 #include "game.hpp"
 #include "textures.hpp"
 #include <iostream>
-// #if defined(PLATFORM_DESKTOP)
-    #define GLSL_VERSION            330
-// #else   // PLATFORM_ANDROID, PLATFORM_WEB
-//     #define GLSL_VERSION            100
-// #endif
-//if you want cross platform, use this to load shaders based off version
+
+#if defined(PLATFORM_WEB)
+    #include <emscripten/emscripten.h>
+#endif
 
 
 int windowWidth = 1000;
 int windowHeight = 500;
 
-void Update() {
-	//use GetFrameTime() for deltaTime
+void UpdateDrawFrame() {
 	UpdateGame();
+	BeginDrawing();
+	ClearBackground(RAYWHITE);
+	DrawGame();
+	EndDrawing();
 }
 
 void Initialize() {
@@ -36,15 +37,14 @@ int main()
 	std::cout << "Running main" << std::endl;
 	Initialize();
 
+#if defined(PLATFORM_WEB)
+	emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
+#else
 	while (!WindowShouldClose()) {
-		Update();
-		//std::cout << "Updated" << std::endl;
-		BeginDrawing();
-		ClearBackground(RAYWHITE);
-		DrawGame();
-		//std::cout << "Drew" << std::endl;
-		EndDrawing();
-	}	
+		UpdateDrawFrame();
+	}
+#endif
+
 	CloseProgram();
    	return 0;
 }

@@ -40,6 +40,6 @@ void main() {
     vec2 uv = fragTexCoord;
     uv.xy += (distance * sin(distance * 0.1 - totalTime * 20)) / (1000 * distance) - lineDirection.xy * length(lineDirection + directionToLine) * lineLength / ((distance + 30) * 2) / 10000;
 
-    finalColor = texture(texture0, uv);
+    finalColor = texture(texture0, fract(uv));
     //finalColor.rb += (distance * sin(distance * 0.1 - totalTime * 20)) / (10 * distance) - lineDirection.xy * length(lineDirection + directionToLine) * lineLength / ((distance + 30) * 2) / 10;
 }

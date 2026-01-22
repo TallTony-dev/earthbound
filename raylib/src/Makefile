@@ -183,7 +183,7 @@ endif
 ifeq ($(TARGET_PLATFORM),$(filter $(TARGET_PLATFORM),PLATFORM_WEB PLATFORM_WEB_RGFW))
     ifeq ($(PLATFORM_OS), WINDOWS)
         # Emscripten required variables
-        EMSDK_PATH         ?= C:/raylib/emsdk
+        EMSDK_PATH         ?= ../../emscripten/emsdk
         EMSCRIPTEN_PATH    ?= $(EMSDK_PATH)/upstream/emscripten
         CLANG_PATH         := $(EMSDK_PATH)/upstream/bin
         PYTHON_PATH        := $(EMSDK_PATH)/python/3.9.2-nuget_64bit

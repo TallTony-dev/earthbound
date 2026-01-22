@@ -31,20 +31,20 @@ vec3 Sobel(vec2 uv) {
     float y = 1.0/312;
 
     vec4 horizEdge = vec4(0.0);
-    horizEdge -= texture(texture0, vec2(uv.x - x, uv.y - y))*1.0;
-    horizEdge -= texture(texture0, vec2(uv.x - x, uv.y   ))*2.0;
-    horizEdge -= texture(texture0, vec2(uv.x - x, uv.y + y))*1.0;
-    horizEdge += texture(texture0, vec2(uv.x + x, uv.y - y))*1.0;
-    horizEdge += texture(texture0, vec2(uv.x + x, uv.y   ))*2.0;
-    horizEdge += texture(texture0, vec2(uv.x + x, uv.y + y))*1.0;
+    horizEdge -= texture(texture0, fract(vec2(uv.x - x, uv.y - y)))*1.0;
+    horizEdge -= texture(texture0, fract(vec2(uv.x - x, uv.y   )))*2.0;
+    horizEdge -= texture(texture0, fract(vec2(uv.x - x, uv.y + y)))*1.0;
+    horizEdge += texture(texture0, fract(vec2(uv.x + x, uv.y - y)))*1.0;
+    horizEdge += texture(texture0, fract(vec2(uv.x + x, uv.y   )))*2.0;
+    horizEdge += texture(texture0, fract(vec2(uv.x + x, uv.y + y)))*1.0;
 
     vec4 vertEdge = vec4(0.0);
-    vertEdge -= texture(texture0, vec2(uv.x - x, uv.y - y))*1.0;
-    vertEdge -= texture(texture0, vec2(uv.x    , uv.y - y))*2.0;
-    vertEdge -= texture(texture0, vec2(uv.x + x, uv.y - y))*1.0;
-    vertEdge += texture(texture0, vec2(uv.x - x, uv.y + y))*1.0;
-    vertEdge += texture(texture0, vec2(uv.x    , uv.y + y))*2.0;
-    vertEdge += texture(texture0, vec2(uv.x + x, uv.y + y))*1.0;
+    vertEdge -= texture(texture0, fract(vec2(uv.x - x, uv.y - y)))*1.0;
+    vertEdge -= texture(texture0, fract(vec2(uv.x    , uv.y - y)))*2.0;
+    vertEdge -= texture(texture0, fract(vec2(uv.x + x, uv.y - y)))*1.0;
+    vertEdge += texture(texture0, fract(vec2(uv.x - x, uv.y + y)))*1.0;
+    vertEdge += texture(texture0, fract(vec2(uv.x    , uv.y + y)))*2.0;
+    vertEdge += texture(texture0, fract(vec2(uv.x + x, uv.y + y)))*1.0;
 
     vec3 edge = sqrt((horizEdge.rgb*horizEdge.rgb) + (vertEdge.rgb*vertEdge.rgb));
     return edge;

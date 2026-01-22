@@ -10,6 +10,7 @@ std::unordered_map<std::string_view, Texture2D> textures;
 
 void InitializeTextures() {
     textures["rocks"] = LoadTex("rocks.png");
+    SetTextureWrap(textures["rocks"], TEXTURE_WRAP_CLAMP);
 }
 
 Texture2D GetTexture(const char* key) {

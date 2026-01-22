@@ -142,8 +142,14 @@ void InitializeGame() {
     player = new Entity(100, 10, 10, PATTACKDANCE, PATTACKSPAM);
     battleEnemies[0] = new Entity(100, 10, 10, EATTACKJAB, EATTACKSPIN);
 
-	for (int i = 0; i < ENEMYSHADERCOUNT; i++)
- 		enemyShaders[i] = LoadShader(0, TextFormat("%s%s", GetApplicationDirectory(), TextFormat("../resources/shaders/enemy%i.fs", i)));
+	for (int i = 0; i < ENEMYSHADERCOUNT; i++) {
+#if defined(PLATFORM_WEB)
+		enemyShaders[i] = LoadShader(TextFormat("%s%s", GetApplicationDirectory(), "../resources/shaders/es_default.vs"),
+		                             TextFormat("%s%s", GetApplicationDirectory(), TextFormat("../resources/shaders/es_enemy%i.fs", i)));
+#else
+		enemyShaders[i] = LoadShader(0, TextFormat("%s%s", GetApplicationDirectory(), TextFormat("../resources/shaders/enemy%i.fs", i)));
+#endif
+	}
        
 }
 
