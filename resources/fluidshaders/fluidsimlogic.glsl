@@ -39,9 +39,13 @@ void main() {
     vec4 topTile = texture(texture0, vec2(tileCoord.x, tileCoord.y + 1) * texelSize);
     vec4 bottomTile = texture(texture0, vec2(tileCoord.x, tileCoord.y - 1) * texelSize);
 
-    vec2 advectedCoord = /*ceil*/((tileCoord - vel) * VELOCITYMULT);
+    vec2 advectedCoord = ((tileCoord - vel * VELOCITYMULT));
     vec4 advectedTileState = texture(texture0, advectedCoord * texelSize);
     vec2 advectedVel = Vel(advectedTileState);
+
+
+    vec2 ceilAdvectedCoord = tileCoord - normalize(vel) * 1.5 - vel * 2.5;
+    vec4 ceilAdvectedTileState = texture(texture0, ceilAdvectedCoord * texelSize);
 
     vec2 leftVel = Vel(leftTile);
     vec2 rightVel = Vel(rightTile);
@@ -60,8 +64,12 @@ void main() {
     vec2 finalVel = diffusedVel - pressureGrad;
     finalVel = clamp(finalVel, vec2(-1.0), vec2(1.0));
 
+
+    float visc = tileState.y + (ceilAdvectedTileState.y - tileState.y) / 2;
+
+
     finalTileState.x = pressure;
-    finalTileState.y = advectedTileState.y;
+    finalTileState.y = visc;
     finalTileState.z = finalVel.x * 0.5 + 0.5;
-    finalTileState.w = finalVel.y * 0.5 + 0.5, 0.0001;
+    finalTileState.w = max(finalVel.y * 0.5 + 0.5, 0.0001);
 }

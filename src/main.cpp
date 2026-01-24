@@ -15,7 +15,7 @@ int windowHeight = 500;
 void UpdateDrawFrame() {
 	UpdateGame();
 	BeginDrawing();
-	ClearBackground(RAYWHITE);
+	ClearBackground(BLACK);
 	DrawGame();
 	EndDrawing();
 }

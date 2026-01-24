@@ -24,5 +24,5 @@ uniform vec2 resolution;
 void main() {
     vec2 scales = vec2(resolution.x / SIMWIDTH, resolution.y / SIMHEIGHT);
     vec4 tile = texture(texture0, fragTexCoord * scales);
-    finalColor = vec4(abs(tile.z - 0.5f) * 2, 0.0, abs(tile.w - 0.5f) * 2, tile.x);
+    finalColor = vec4(abs(tile.z - 0.5f) * 2, tile.y, abs(tile.w - 0.5f) * 2, tile.x);
 }

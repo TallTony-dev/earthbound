@@ -23,7 +23,7 @@ void FluidSim::UpdateSim() {
 
                 transferBuffer.commands[transferBuffer.count].w = 30;
 
-                transferBuffer.commands[transferBuffer.count].viscosity = sinf(GetTime()) * 2 + 1;
+                transferBuffer.commands[transferBuffer.count].viscosity = 0.5 * (sinf(GetTime()) + 1);
 
                 transferBuffer.commands[transferBuffer.count].pressure = 0.2f;
                 transferBuffer.count++;

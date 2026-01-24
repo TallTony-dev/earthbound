@@ -35,14 +35,17 @@ void main() {
         int radius = int(commands[i * 7 + 2]);
         float xVector = commands[i * 7 + 3];
         float yVector = commands[i * 7 + 4];
-        float pressure = /*commands[i * 7 + 5]*/0;
+        float pressure = commands[i * 7 + 5];
         float viscosity = commands[i * 7 + 6];
+        float dist = distance(tileCoord, vec2(x,y));
+        if (dist <= radius) { //if this tile is in the radius
+            float deltax = x - tileCoord.x;
+            float deltay = y - tileCoord.y;
 
-        if (distance(tileCoord, vec2(x,y)) <= radius) { //if this tile is in the radius
             finalSimState.x += pressure;
 
-            float velx = (finalSimState.z - 0.5) * 2 + float(xVector) * VECTORSTRENGTHMULT;
-            float vely = (finalSimState.w - 0.5) * 2 + float(yVector) * VECTORSTRENGTHMULT;
+            float velx = ((finalSimState.z - 0.5) * 2 + float(xVector) * VECTORSTRENGTHMULT) / (deltax / 15 + 1 * sign(deltax));
+            float vely = ((finalSimState.w - 0.5) * 2 + float(yVector) * VECTORSTRENGTHMULT) / (deltay / 15 + 1 * sign(deltay));
             velx = clamp(velx, -1.0, 1.0);
             vely = clamp(vely, -1.0, 1.0);
             finalSimState.z = velx * 0.5 + 0.50001;

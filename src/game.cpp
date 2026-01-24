@@ -74,7 +74,7 @@ void DrawFramerate(int size) {
 }
 
 void DrawGame() {
-    DrawBackground();
+    //DrawBackground();
     //std::cout << "Drew background" << std::endl;
     //DrawHud();
     DrawFluidSims();
@@ -136,7 +136,7 @@ void InitializeGame() {
     InitializeHud();
     InitializeBackground();
     InitializeFluidSims();
-    SetTargetFPS(200);
+    SetTargetFPS(165);
 
 
     player = new Entity(100, 10, 10, PATTACKDANCE, PATTACKSPAM);
