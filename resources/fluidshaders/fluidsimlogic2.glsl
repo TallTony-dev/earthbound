@@ -44,7 +44,7 @@ void main() {
     vec2 advectedVel = Vel(advectedTileState);
 
 
-    vec2 ceilAdvectedCoord = tileCoord - normalize(vel) * 1.5 - vel * 2.5;
+    vec2 ceilAdvectedCoord = tileCoord - normalize(vel) * 3 - vel * 4;
     vec4 ceilAdvectedTileState = texture(texture0, ceilAdvectedCoord * texelSize);
 
     vec2 leftVel = Vel(leftTile);
@@ -65,7 +65,7 @@ void main() {
     finalVel = clamp(finalVel, vec2(-1.0), vec2(1.0));
 
 
-    float visc = tileState.y + (ceilAdvectedTileState.y - tileState.y) / 2;
+    float visc = ceilAdvectedTileState.y + (ceilAdvectedTileState.y - tileState.y) / ((tileState.x - ceilAdvectedTileState.x));
 
 
     finalTileState.x = pressure;

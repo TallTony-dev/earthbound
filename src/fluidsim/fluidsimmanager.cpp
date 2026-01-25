@@ -38,5 +38,5 @@ void DrawFluidSims() {
 
 
 void InitializeFluidSims() {
-    AddFluidSim(type1, std::numeric_limits<float>::infinity());
+    AddFluidSim(type2, std::numeric_limits<float>::infinity());
 }

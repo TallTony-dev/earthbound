@@ -13,7 +13,7 @@
 void FluidSim::UpdateSim() {
     //float deltaTime = GetFrameTime();
     if (transferBuffer.count < MAXFLUIDSIMTRANSFERS) {
-        if (type_ == type1) {
+        if (type_ == type1 || type_ == type2) {
             if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
                 transferBuffer.commands[transferBuffer.count].x = GetMouseX();
                 transferBuffer.commands[transferBuffer.count].y = GetMouseY();
@@ -84,16 +84,24 @@ FluidSim::FluidSim(FluidSimType type) {
     type_ = type;
 
 #if defined(PLATFORM_WEB)
-    fluidSimLogicShader = LoadShader("../resources/shaders/es_default.vs", "../resources/fluidshaders/es_fluidsimlogic.glsl");
     fluidSimTransferShader = LoadShader("../resources/shaders/es_default.vs", "../resources/fluidshaders/es_fluidsimtransfer.glsl");
     if (type == type1) {
+        fluidSimLogicShader = LoadShader("../resources/shaders/es_default.vs", "../resources/fluidshaders/es_fluidsimlogic1.glsl");
         fluidSimRenderShader = LoadShader("../resources/shaders/es_default.vs", "../resources/fluidshaders/es_fluidsimrenderer1.glsl");
     }
+    if (type == type2) {
+        fluidSimLogicShader = LoadShader("../resources/shaders/es_default.vs", "../resources/fluidshaders/es_fluidsimlogic2.glsl");
+        fluidSimRenderShader = LoadShader("../resources/shaders/es_default.vs", "../resources/fluidshaders/es_fluidsimrenderer2.glsl");
+    }
 #else
-    fluidSimLogicShader = LoadShader(0, "../resources/fluidshaders/fluidsimlogic.glsl");
     fluidSimTransferShader = LoadShader(0, "../resources/fluidshaders/fluidsimtransfer.glsl");
     if (type == type1) {
+        fluidSimLogicShader = LoadShader(0, "../resources/fluidshaders/fluidsimlogic1.glsl");
         fluidSimRenderShader = LoadShader(0, "../resources/fluidshaders/fluidsimrenderer1.glsl");
+    }
+    if (type == type2) {
+        fluidSimLogicShader = LoadShader(0, "../resources/fluidshaders/fluidsimlogic2.glsl");
+        fluidSimRenderShader = LoadShader(0, "../resources/fluidshaders/fluidsimrenderer2.glsl");
     }
 #endif
 
