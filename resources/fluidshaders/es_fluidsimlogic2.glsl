@@ -64,9 +64,14 @@ void main() {
     vec2 finalVel = diffusedVel - pressureGrad;
     finalVel = clamp(finalVel, vec2(-1.0), vec2(1.0));
 
-
-    float visc = ceilAdvectedTileState.y + (ceilAdvectedTileState.y - tileState.y) / (2 * (tileState.x - ceilAdvectedTileState.x));
-
+    float pressureDiff = tileState.x - ceilAdvectedTileState.x;
+    float viscDenom = 2.0 * pressureDiff;
+    float visc;
+    if (abs(viscDenom) > 0.0001) {
+        visc = ceilAdvectedTileState.y + (ceilAdvectedTileState.y - tileState.y) / viscDenom;
+    } else {
+        visc = ceilAdvectedTileState.y;
+    }
 
     finalTileState.x = pressure;
     finalTileState.y = visc;
