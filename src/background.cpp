@@ -12,12 +12,7 @@ Texture2D rocks;
 void InitializeBackground() {
 
     for (int i = 0; i < bgShaderCount; i++) {
-#if defined(PLATFORM_WEB)
-		bgShaders[i] = LoadShader(TextFormat("%s%s", GetApplicationDirectory(), "../resources/shaders/es_default.vs"), 
-		                          TextFormat("%s%s", GetApplicationDirectory(), TextFormat("../resources/shaders/es_background%i.fs", i)));
-#else
 		bgShaders[i] = LoadShader(0, TextFormat("%s%s", GetApplicationDirectory(), TextFormat("../resources/shaders/background%i.fs", i)));
-#endif
 	}
     rocks = GetTexture("rocks");
 }

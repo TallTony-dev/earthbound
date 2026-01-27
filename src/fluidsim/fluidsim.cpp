@@ -83,17 +83,6 @@ void FluidSim::DrawSim() {
 FluidSim::FluidSim(FluidSimType type) {
     type_ = type;
 
-#if defined(PLATFORM_WEB)
-    fluidSimTransferShader = LoadShader("../resources/shaders/es_default.vs", "../resources/fluidshaders/es_fluidsimtransfer.glsl");
-    if (type == type1) {
-        fluidSimLogicShader = LoadShader("../resources/shaders/es_default.vs", "../resources/fluidshaders/es_fluidsimlogic1.glsl");
-        fluidSimRenderShader = LoadShader("../resources/shaders/es_default.vs", "../resources/fluidshaders/es_fluidsimrenderer1.glsl");
-    }
-    if (type == type2) {
-        fluidSimLogicShader = LoadShader("../resources/shaders/es_default.vs", "../resources/fluidshaders/es_fluidsimlogic2.glsl");
-        fluidSimRenderShader = LoadShader("../resources/shaders/es_default.vs", "../resources/fluidshaders/es_fluidsimrenderer2.glsl");
-    }
-#else
     fluidSimTransferShader = LoadShader(0, "../resources/fluidshaders/fluidsimtransfer.glsl");
     if (type == type1) {
         fluidSimLogicShader = LoadShader(0, "../resources/fluidshaders/fluidsimlogic1.glsl");
@@ -103,7 +92,6 @@ FluidSim::FluidSim(FluidSimType type) {
         fluidSimLogicShader = LoadShader(0, "../resources/fluidshaders/fluidsimlogic2.glsl");
         fluidSimRenderShader = LoadShader(0, "../resources/fluidshaders/fluidsimrenderer2.glsl");
     }
-#endif
 
     transferShaderCommandLoc = GetShaderLocation(fluidSimTransferShader, "commands");
     transferShaderCountLoc = GetShaderLocation(fluidSimTransferShader, "commandCount");

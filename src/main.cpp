@@ -4,9 +4,6 @@
 #include "textures.hpp"
 #include <iostream>
 
-#if defined(PLATFORM_WEB)
-    #include <emscripten/emscripten.h>
-#endif
 
 
 int windowWidth = 1000;
@@ -36,14 +33,9 @@ int main()
 {
 	std::cout << "Running main" << std::endl;
 	Initialize();
-
-#if defined(PLATFORM_WEB)
-	emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
-#else
 	while (!WindowShouldClose()) {
 		UpdateDrawFrame();
 	}
-#endif
 
 	CloseProgram();
    	return 0;
